@@ -1,0 +1,30 @@
+{
+  "name": "image-wizard-backend",
+  "version": "1.0.0",
+  "description": "Serves up an AI generated image from a user prompt.",
+  "keywords": [
+    "flux",
+    "image",
+    "generation"
+  ],
+  "homepage": "https://github.com/proofoftom/image-wizard#readme",
+  "bugs": {
+    "url": "https://github.com/proofoftom/image-wizard/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proofoftom/image-wizard.git"
+  },
+  "license": "ISC",
+  "author": "Tommy Cox <proofoftom@proton.me>",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "winston": "^3.17.0"
+  }
+}
