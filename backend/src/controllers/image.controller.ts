@@ -11,7 +11,10 @@ export class ImageController {
 
   async generateImage(req: Request, res: Response, next: NextFunction) {
     try {
-      const options = req.body;
+      const options = {
+      prompt: req.body.prompt,
+      ...req.body
+    };
       const imageBuffer = await this.imageService.generateImage(options);
 
       res.type("image/png"); // Adjust based on requested format
