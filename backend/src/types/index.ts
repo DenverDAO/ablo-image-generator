@@ -1,8 +1,10 @@
 export interface ImageGenerationOptions {
+  prompt: string;
   width: number;
   height: number;
   format: "jpeg" | "png";
-  // Add other Flux-specific parameters
+  guidance_scale?: number;
+  num_inference_steps?: number;
 }
 
 export interface ApiResponse<T> {
