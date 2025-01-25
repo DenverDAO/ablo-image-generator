@@ -1,26 +1,29 @@
-import { Request, Response, NextFunction } from "express";
-import { ImageService } from "../services/image.service";
-import { formatResponse } from "../utils/response";
+import { Response } from "express";
+import { huggingfaceService } from "../services/huggingface.service";
+import { GenerateImageRequest } from "../types/requests";
 
-export class ImageController {
-  private imageService: ImageService;
+export const generateImage = async (
+  req: GenerateImageRequest,
+  res: Response
+) => {
+  try {
+    const { prompt, negativePrompt, width = 512, height = 512 } = req.body;
 
-  constructor() {
-    this.imageService = new ImageService();
+    const imageBuffer = await huggingfaceService.generateImage({
+      prompt,
+      negativePrompt,
+      width,
+      height,
+    });
+
+    res.json({
+      image: imageBuffer.toString("base64"),
+      mimeType: "image/jpeg",
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Image generation failed",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
   }
-
-  async generateImage(req: Request, res: Response, next: NextFunction) {
-    try {
-      const options = {
-      prompt: req.body.prompt,
-      ...req.body
-    };
-      const imageBuffer = await this.imageService.generateImage(options);
-
-      res.type("image/png"); // Adjust based on requested format
-      res.send(imageBuffer);
-    } catch (error) {
-      next(error);
-    }
-  }
-}
+};

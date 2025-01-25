@@ -1,24 +1,29 @@
-import { Request, Response, NextFunction } from 'express';
-import { ImageGenerationOptions } from '../types';
+import { Response, NextFunction } from "express";
+import { body, validationResult } from "express-validator";
+import { GenerateImageRequest } from "../types/requests";
 
-export function validateImageRequest(req: Request, res: Response, next: NextFunction) {
-  const { prompt, width, height, format } = req.body;
-  
-  if (!prompt || typeof prompt !== 'string') {
-    return res.status(400).json({ success: false, error: 'Invalid or missing prompt' });
-  }
+export const validateGenerateRequest = (
+  req: GenerateImageRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const validations = [
+    body("prompt")
+      .isString()
+      .notEmpty()
+      .withMessage("Prompt is required")
+      .isLength({ max: 500 })
+      .withMessage("Prompt exceeds 500 characters"),
+    body("negativePrompt").optional().isString().isLength({ max: 500 }),
+    body("width").optional().isInt({ min: 256, max: 1024 }),
+    body("height").optional().isInt({ min: 256, max: 1024 }),
+  ];
 
-  if (![256, 512, 768].includes(Number(width))) {
-    return res.status(400).json({ success: false, error: 'Width must be 256, 512, or 768' });
-  }
-
-  if (![256, 512, 768].includes(Number(height))) {
-    return res.status(400).json({ success: false, error: 'Height must be 256, 512, or 768' });
-  }
-
-  if (!['jpeg', 'png'].includes(format)) {
-    return res.status(400).json({ success: false, error: 'Invalid format' });
-  }
-
-  next();
-}
+  Promise.all(validations.map((validation) => validation.run(req))).then(() => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  });
+};

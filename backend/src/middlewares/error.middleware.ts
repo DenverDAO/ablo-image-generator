@@ -1,14 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
-import { formatResponse } from '../utils/response';
+import { ErrorRequestHandler } from "express";
 
-export function errorHandler(
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   console.error(`[${new Date().toISOString()}] Error: ${err.message}`);
-  res.status(500).json(
-    formatResponse(null, err.message || 'Internal server error')
-  );
-}
+  console.error(err.stack);
+
+  res.status(500).json({
+    error: "Internal Server Error",
+    message:
+      process.env.NODE_ENV === "development"
+        ? err.message
+        : "Something went wrong",
+  });
+};
