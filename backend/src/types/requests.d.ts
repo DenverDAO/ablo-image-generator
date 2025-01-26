@@ -10,6 +10,7 @@ declare namespace Express {
 
 export interface GenerateImageRequest extends Express.Request {
   body: {
+    model?: string;
     prompt: string;
     negativePrompt?: string;
     width?: number;

@@ -14,10 +14,11 @@ class HfService {
     width?: number;
     height?: number;
     format?: string;
+    model?: string;
   }): Promise<Buffer> {
     try {
       const response = await this.instance.textToImage({
-        model: config.huggingfaceModel,
+        model: params.model || config.huggingfaceModel,
         inputs: params.prompt,
         negative_prompt: params.negativePrompt,
         parameters: {

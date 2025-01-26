@@ -8,12 +8,14 @@ export const generateImage = async (
 ) => {
   try {
     const {
+      model,
       prompt,
       negativePrompt,
       width = 512,
       height = 512,
       format = "jpeg",
     } = req.body as {
+      model?: string;
       prompt: string;
       negativePrompt?: string;
       width?: number;
@@ -22,6 +24,7 @@ export const generateImage = async (
     };
 
     const imageBuffer = await HfService.generateImage({
+      model,
       prompt,
       negativePrompt,
       width,
