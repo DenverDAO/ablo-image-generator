@@ -13,6 +13,7 @@ class HfService {
     negativePrompt?: string;
     width?: number;
     height?: number;
+    format?: string;
   }): Promise<Buffer> {
     try {
       const response = await this.instance.textToImage({
@@ -25,7 +26,16 @@ class HfService {
         },
       });
 
-      return Buffer.from(await response.arrayBuffer());
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      // Convert to PNG if requested
+      if (params.format === "png") {
+        const sharp = require("sharp");
+        return await sharp(buffer).png().toBuffer();
+      }
+
+      return buffer;
     } catch (error) {
       throw new Error(
         `Hugging Face API error: ${

@@ -1,43 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState("");
   const [width, setWidth] = useState(512);
   const [height, setHeight] = useState(512);
-  const [format, setFormat] = useState('png');
+  const [format, setFormat] = useState("jpeg");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const response = await fetch('http://localhost:3001/api/images/generate', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/api/generate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           prompt,
           width,
           height,
-          format
+          format,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Image generation failed');
+        throw new Error(errorData.error || "Image generation failed");
       }
 
-      const blob = await response.blob();
-      setImage(URL.createObjectURL(blob));
+      const data = await response.json();
+      setImage(`data:${data.mimeType};base64,${data.image}`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -57,17 +55,23 @@ function App() {
             required
           />
         </div>
-        
+
         <div>
           <label>Width:</label>
-          <select value={width} onChange={(e) => setWidth(Number(e.target.value))}>
+          <select
+            value={width}
+            onChange={(e) => setWidth(Number(e.target.value))}
+          >
             <option value={256}>256</option>
             <option value={512}>512</option>
             <option value={768}>768</option>
           </select>
 
           <label>Height:</label>
-          <select value={height} onChange={(e) => setHeight(Number(e.target.value))}>
+          <select
+            value={height}
+            onChange={(e) => setHeight(Number(e.target.value))}
+          >
             <option value={256}>256</option>
             <option value={512}>512</option>
             <option value={768}>768</option>
@@ -75,13 +79,13 @@ function App() {
 
           <label>Format:</label>
           <select value={format} onChange={(e) => setFormat(e.target.value)}>
-            <option value="png">PNG</option>
             <option value="jpeg">JPEG</option>
+            <option value="png">PNG</option>
           </select>
         </div>
 
         <button type="submit" disabled={loading}>
-          {loading ? 'Generating...' : 'Generate Image'}
+          {loading ? "Generating..." : "Generate Image"}
         </button>
       </form>
 
@@ -91,4 +95,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

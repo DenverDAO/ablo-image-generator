@@ -7,18 +7,25 @@ export const generateImage = async (
   res: Response
 ) => {
   try {
-    const { prompt, negativePrompt, width = 512, height = 512 } = req.body;
+    const {
+      prompt,
+      negativePrompt,
+      width = 512,
+      height = 512,
+      format = "jpeg",
+    } = req.body;
 
     const imageBuffer = await HfService.generateImage({
       prompt,
       negativePrompt,
       width,
       height,
+      format,
     });
 
     res.json({
       image: imageBuffer.toString("base64"),
-      mimeType: "image/jpeg",
+      mimeType: format === "png" ? "image/png" : "image/jpeg",
     });
   } catch (error) {
     res.status(500).json({

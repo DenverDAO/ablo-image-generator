@@ -14,5 +14,6 @@ export interface GenerateImageRequest extends Express.Request {
     negativePrompt?: string;
     width?: number;
     height?: number;
+    format?: "jpeg" | "png";
   };
 }
