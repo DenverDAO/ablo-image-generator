@@ -34,7 +34,7 @@ const validateConfig = (): Config => {
     corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
     huggingfaceToken: process.env.HUGGINGFACE_ACCESS_TOKEN,
     huggingfaceModel:
-      process.env.HUGGINGFACE_MODEL || "black-forest-labs/FLUX.1-dev",
+      process.env.HUGGINGFACE_MODEL || "black-forest-labs/FLUX.1-schnell",
   };
 };
 

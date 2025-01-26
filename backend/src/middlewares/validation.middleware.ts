@@ -14,7 +14,11 @@ export const validateGenerateRequest = (
       .withMessage("Prompt is required")
       .isLength({ max: 500 })
       .withMessage("Prompt exceeds 500 characters"),
-    body("negativePrompt").optional().isString().isLength({ max: 500 }),
+    body("negativePrompt")
+      .optional()
+      .isString()
+      .isLength({ max: 500 })
+      .withMessage("Negative prompt exceeds 500 characters"),
     body("width").optional().isInt({ min: 256, max: 1024 }),
     body("height").optional().isInt({ min: 256, max: 1024 }),
   ];

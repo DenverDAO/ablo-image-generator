@@ -53,6 +53,27 @@ Environment variables (via `.env`):
   - Rate limiting
   - Request validation
 
+### Generate Image Endpoint
+
+POST `/api/generate`
+
+**Request Body:**
+
+```json
+{
+  "prompt": "string (required, max 500 chars)",
+  "negativePrompt": "string (optional, max 500 chars)",
+  "width": "number (optional, 256-1024)",
+  "height": "number (optional, 256-1024)",
+  "format": "string (optional, 'jpeg' or 'png')"
+}
+
+**Example Negative Prompts:**
+- For portraits: "blurry, distorted face, extra fingers"
+- For landscapes: "low quality, oversaturated, unrealistic"
+- For objects: "poorly drawn, cartoonish, low detail"
+```
+
 ## Testing
 
 ```bash

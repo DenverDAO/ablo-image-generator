@@ -163,4 +163,45 @@ describe("generateImage Controller", () => {
       mimeType: "image/jpeg",
     });
   });
+
+  it("should handle negative prompt correctly", async () => {
+    req.body = {
+      prompt: "A cat wearing a hat",
+      negativePrompt: "blurry, low quality",
+      width: 512,
+      height: 512,
+    };
+
+    const mockImageBuffer = Buffer.from("mock-image-data");
+    (HfService.generateImage as jest.Mock).mockResolvedValue(mockImageBuffer);
+
+    await generateImage(req as GenerateImageRequest, res as Response);
+
+    expect(HfService.generateImage).toHaveBeenCalledWith({
+      prompt: "A cat wearing a hat",
+      negativePrompt: "blurry, low quality",
+      width: 512,
+      height: 512,
+    });
+  });
+
+  it("should handle missing negative prompt", async () => {
+    req.body = {
+      prompt: "A cat wearing a hat",
+      width: 512,
+      height: 512,
+    };
+
+    const mockImageBuffer = Buffer.from("mock-image-data");
+    (HfService.generateImage as jest.Mock).mockResolvedValue(mockImageBuffer);
+
+    await generateImage(req as GenerateImageRequest, res as Response);
+
+    expect(HfService.generateImage).toHaveBeenCalledWith({
+      prompt: "A cat wearing a hat",
+      negativePrompt: undefined,
+      width: 512,
+      height: 512,
+    });
+  });
 });

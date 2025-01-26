@@ -19,8 +19,8 @@ class HfService {
       const response = await this.instance.textToImage({
         model: config.huggingfaceModel,
         inputs: params.prompt,
+        negative_prompt: params.negativePrompt,
         parameters: {
-          negative_prompt: params.negativePrompt,
           width: params.width,
           height: params.height,
         },

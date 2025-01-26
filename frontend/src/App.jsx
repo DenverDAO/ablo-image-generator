@@ -3,6 +3,7 @@ import "./App.css";
 
 function App() {
   const [prompt, setPrompt] = useState("");
+  const [negativePrompt, setNegativePrompt] = useState("");
   const [width, setWidth] = useState(512);
   const [height, setHeight] = useState(512);
   const [format, setFormat] = useState("jpeg");
@@ -15,6 +16,12 @@ function App() {
     setLoading(true);
     setError("");
 
+    if (negativePrompt.length > 500) {
+      setError("Negative prompt must be 500 characters or less");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3000/api/generate", {
         method: "POST",
@@ -23,6 +30,7 @@ function App() {
         },
         body: JSON.stringify({
           prompt,
+          negativePrompt: negativePrompt || undefined,
           width,
           height,
           format,
@@ -31,7 +39,7 @@ function App() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Image generation failed");
+            throw new Error(errorData.error || "Image generation failed");
       }
 
       const data = await response.json();
@@ -53,6 +61,24 @@ function App() {
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Enter image prompt..."
             required
+          />
+        </div>
+
+        <div className="input-group">
+          <label>
+            Negative Prompt:
+            <span
+              className="tooltip"
+              title="Specify what the model should avoid generating"
+            >
+              ℹ️
+            </span>
+          </label>
+          <textarea
+            value={negativePrompt}
+            onChange={(e) => setNegativePrompt(e.target.value)}
+            placeholder="Enter negative prompt (optional)"
+            maxLength={500}
           />
         </div>
 

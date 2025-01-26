@@ -13,7 +13,13 @@ export const generateImage = async (
       width = 512,
       height = 512,
       format = "jpeg",
-    } = req.body;
+    } = req.body as {
+      prompt: string;
+      negativePrompt?: string;
+      width?: number;
+      height?: number;
+      format?: string;
+    };
 
     const imageBuffer = await HfService.generateImage({
       prompt,
