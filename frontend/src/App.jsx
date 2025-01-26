@@ -38,14 +38,30 @@ function App() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = response.json();
+        switch (response.status) {
+          case 429:
+            throw new Error(
+              "Too many requests - please wait before trying again"
+            );
+          case 500:
+            throw new Error("Server error - please try again later");
+          default:
             throw new Error(errorData.error || "Image generation failed");
+        }
       }
 
       const data = await response.json();
       setImage(`data:${data.mimeType};base64,${data.image}`);
     } catch (err) {
-      setError(err.message);
+      let message = `${err.message}: `;
+      if (err instanceof TypeError) {
+        message +=
+          "Network error - is the backend available with CORS properly configured?";
+      } else if (err instanceof SyntaxError) {
+        message += "Invalid server response";
+      }
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -53,7 +69,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Flux Image Wizard</h1>
+      <h1>HuggingFace Image Wizard</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <textarea
