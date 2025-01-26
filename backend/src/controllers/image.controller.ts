@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { huggingfaceService } from "../services/huggingface.service";
+import { HfService } from "../services/huggingface.service";
 import { GenerateImageRequest } from "../types/requests";
 
 export const generateImage = async (
@@ -9,7 +9,7 @@ export const generateImage = async (
   try {
     const { prompt, negativePrompt, width = 512, height = 512 } = req.body;
 
-    const imageBuffer = await huggingfaceService.generateImage({
+    const imageBuffer = await HfService.generateImage({
       prompt,
       negativePrompt,
       width,

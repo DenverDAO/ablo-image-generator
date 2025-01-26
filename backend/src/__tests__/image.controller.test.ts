@@ -1,9 +1,9 @@
 import { Response } from "express";
 import { generateImage } from "../controllers/image.controller";
-import { huggingfaceService } from "../services/huggingface.service";
+import { HfService } from "../services/huggingface.service";
 import { GenerateImageRequest } from "../types/requests";
 
-// Mock the huggingfaceService module
+// Mock the HfService module
 jest.mock("../services/huggingface.service");
 
 describe("generateImage Controller", () => {
@@ -41,16 +41,14 @@ describe("generateImage Controller", () => {
   });
 
   it("should generate an image and return it in base64 format", async () => {
-    // Mock the huggingfaceService.generateImage to return a buffer
+    // Mock the HfService.generateImage to return a buffer
     const mockImageBuffer = Buffer.from("mock-image-data");
-    (huggingfaceService.generateImage as jest.Mock).mockResolvedValue(
-      mockImageBuffer
-    );
+    (HfService.generateImage as jest.Mock).mockResolvedValue(mockImageBuffer);
 
     await generateImage(req as GenerateImageRequest, res as Response);
 
     // Verify that the service was called with the correct parameters
-    expect(huggingfaceService.generateImage).toHaveBeenCalledWith({
+    expect(HfService.generateImage).toHaveBeenCalledWith({
       prompt: "A cat wearing a hat",
       negativePrompt: "blurry",
       width: 512,
@@ -72,14 +70,12 @@ describe("generateImage Controller", () => {
     };
 
     const mockImageBuffer = Buffer.from("mock-image-data");
-    (huggingfaceService.generateImage as jest.Mock).mockResolvedValue(
-      mockImageBuffer
-    );
+    (HfService.generateImage as jest.Mock).mockResolvedValue(mockImageBuffer);
 
     await generateImage(req as GenerateImageRequest, res as Response);
 
     // Verify that the service was called with default values
-    expect(huggingfaceService.generateImage).toHaveBeenCalledWith({
+    expect(HfService.generateImage).toHaveBeenCalledWith({
       prompt: "A cat wearing a hat",
       negativePrompt: undefined,
       width: 512,
@@ -95,16 +91,14 @@ describe("generateImage Controller", () => {
   });
 
   it("should handle errors during image generation", async () => {
-    // Mock the huggingfaceService.generateImage to throw an error
+    // Mock the HfService.generateImage to throw an error
     const mockError = new Error("Failed to generate image");
-    (huggingfaceService.generateImage as jest.Mock).mockRejectedValue(
-      mockError
-    );
+    (HfService.generateImage as jest.Mock).mockRejectedValue(mockError);
 
     await generateImage(req as GenerateImageRequest, res as Response);
 
     // Verify that the service was called
-    expect(huggingfaceService.generateImage).toHaveBeenCalledWith({
+    expect(HfService.generateImage).toHaveBeenCalledWith({
       prompt: "A cat wearing a hat",
       negativePrompt: "blurry",
       width: 512,
@@ -120,15 +114,13 @@ describe("generateImage Controller", () => {
   });
 
   it("should handle unknown errors during image generation", async () => {
-    // Mock the huggingfaceService.generateImage to throw a non-Error object
-    (huggingfaceService.generateImage as jest.Mock).mockRejectedValue(
-      "Unknown error"
-    );
+    // Mock the HfService.generateImage to throw a non-Error object
+    (HfService.generateImage as jest.Mock).mockRejectedValue("Unknown error");
 
     await generateImage(req as GenerateImageRequest, res as Response);
 
     // Verify that the service was called
-    expect(huggingfaceService.generateImage).toHaveBeenCalledWith({
+    expect(HfService.generateImage).toHaveBeenCalledWith({
       prompt: "A cat wearing a hat",
       negativePrompt: "blurry",
       width: 512,
@@ -152,14 +144,12 @@ describe("generateImage Controller", () => {
     };
 
     const mockImageBuffer = Buffer.from("mock-image-data");
-    (huggingfaceService.generateImage as jest.Mock).mockResolvedValue(
-      mockImageBuffer
-    );
+    (HfService.generateImage as jest.Mock).mockResolvedValue(mockImageBuffer);
 
     await generateImage(req as GenerateImageRequest, res as Response);
 
     // Verify that the service was called with the invalid values
-    expect(huggingfaceService.generateImage).toHaveBeenCalledWith({
+    expect(HfService.generateImage).toHaveBeenCalledWith({
       prompt: "A cat wearing a hat",
       negativePrompt: undefined,
       width: -100,

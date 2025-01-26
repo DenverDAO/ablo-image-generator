@@ -1,7 +1,7 @@
 import { HfInference } from "@huggingface/inference";
 import { config } from "../config/env";
 
-class huggingfaceService {
+class HfService {
   private static instance: HfInference;
 
   static {
@@ -36,4 +36,4 @@ class huggingfaceService {
   }
 }
 
-export { huggingfaceService };
+export { HfService };

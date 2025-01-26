@@ -4,8 +4,8 @@ dotenv.config();
 
 interface Config {
   port: number;
-  huggingfaceToken: string;
   corsOrigin: string;
+  huggingfaceToken: string;
   huggingfaceModel: string;
 }
 
@@ -31,8 +31,8 @@ const validateConfig = (): Config => {
 
   return {
     port,
-    huggingfaceToken: process.env.HUGGINGFACE_ACCESS_TOKEN,
     corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    huggingfaceToken: process.env.HUGGINGFACE_ACCESS_TOKEN,
     huggingfaceModel:
       process.env.HUGGINGFACE_MODEL || "black-forest-labs/FLUX.1-dev",
   };
