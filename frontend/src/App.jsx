@@ -115,12 +115,11 @@ function App() {
       const data = await response.json();
       setImage(`data:${data.mimeType};base64,${data.image}`);
     } catch (err) {
-      let message = `${err.message}: `;
+      let message = err.message;
       if (err instanceof TypeError) {
-        message +=
-          "Network error - is the backend available with CORS properly configured?";
+        message = `${err.message}: Network error - is the backend available with CORS properly configured?`;
       } else if (err instanceof SyntaxError) {
-        message += "Invalid server response";
+        message += `${err.message}: Invalid server response`;
       }
       setError(message);
     } finally {
@@ -173,32 +172,36 @@ function App() {
           />
         </div>
 
-        <div>
-          <label>Width:</label>
-          <select
-            value={width}
-            onChange={(e) => setWidth(Number(e.target.value))}
-          >
-            <option value={256}>256</option>
-            <option value={512}>512</option>
-            <option value={768}>768</option>
-          </select>
-
-          <label>Height:</label>
-          <select
-            value={height}
-            onChange={(e) => setHeight(Number(e.target.value))}
-          >
-            <option value={256}>256</option>
-            <option value={512}>512</option>
-            <option value={768}>768</option>
-          </select>
-
-          <label>Format:</label>
-          <select value={format} onChange={(e) => setFormat(e.target.value)}>
-            <option value="jpeg">JPEG</option>
-            <option value="png">PNG</option>
-          </select>
+        <div className="dimensions-group">
+          <div>
+            <label>Width:</label>
+            <select
+              value={width}
+              onChange={(e) => setWidth(Number(e.target.value))}
+            >
+              <option value={256}>256</option>
+              <option value={512}>512</option>
+              <option value={768}>768</option>
+            </select>
+          </div>
+          <div>
+            <label>Height:</label>
+            <select
+              value={height}
+              onChange={(e) => setHeight(Number(e.target.value))}
+            >
+              <option value={256}>256</option>
+              <option value={512}>512</option>
+              <option value={768}>768</option>
+            </select>
+          </div>
+          <div>
+            <label>Format:</label>
+            <select value={format} onChange={(e) => setFormat(e.target.value)}>
+              <option value="jpeg">JPEG</option>
+              <option value="png">PNG</option>
+            </select>
+          </div>
         </div>
 
         <button type="submit" disabled={loading}>
