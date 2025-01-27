@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Express.js backend service handling AI image generation workflows using Hugging Face models. Manages API requests, model inference, and response handling.
+Express.js server handling AI image generation workflows using text-to-image models hosted on Hugging Face. Manages API requests, model inference, and response handling.
 
 ## Project Structure
 
@@ -30,7 +30,7 @@ src/
 
 ```bash
 pnpm install
-cp .env.example .env
+cp .env.example .env # Update with your Hugging Face Access Token
 pnpm dev
 ```
 
@@ -39,19 +39,26 @@ pnpm dev
 Environment variables (via `.env`):
 
 - PORT: Server port (default: 3000)
-- CORS_ORIGIN: Allowed origins
+- CORS_ORIGIN: Allowed origins (default: localhost:5173)
 - HUGGINGFACE_ACCESS_TOKEN: Access token for AI services
-- HUGGINGFACE_MODEL: Model identifier
+- HUGGINGFACE_MODEL: Model identifier (used as fallback if not provided in request)
 
 ## API Documentation
 
-- Base URL: `/api`
-- Middleware stack:
-  - CORS with configurable origins
-  - 10MB JSON payload limit
-  - URL-encoded body parsing
-  - Rate limiting
-  - Request validation
+### Middleware stack
+
+- CORS with configurable origins
+- 10MB JSON payload limit
+- URL-encoded body parsing
+- Rate limiting
+- Request validation
+- Error handling with structured responses
+
+### Health Check Endpoint
+
+Ensure the API is running and responsive.
+
+POST `/api/health-check`
 
 ### Generate Image Endpoint
 
@@ -67,12 +74,13 @@ POST `/api/generate`
   "height": "number (optional, 256-1024)",
   "format": "string (optional, 'jpeg' or 'png')"
 }
+```
 
 **Example Negative Prompts:**
+
 - For portraits: "blurry, distorted face, extra fingers"
 - For landscapes: "low quality, oversaturated, unrealistic"
 - For objects: "poorly drawn, cartoonish, low detail"
-```
 
 ## Testing
 
@@ -81,4 +89,4 @@ pnpm test
 ```
 
 - Jest test framework
-- Tests located in `__tests__/` directory
+- Tests located in `src/__tests__/` directory

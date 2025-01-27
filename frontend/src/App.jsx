@@ -128,10 +128,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>
-        🧙 Huggi<span className="nftTitle">NF</span>ace
-        <span className="nftTitle">T</span> Wizard 🧙
-      </h1>
+      <h1>Hugging Face Image Generator</h1>
       <div className="content-wrapper">
         <form onSubmit={handleSubmit}>
           <div className="input-group">
@@ -240,16 +237,6 @@ function App() {
               <div className="placeholder-text"></div>
             )}
           </div>
-          <button
-            hidden={!image}
-            style={{
-              width: "10rem",
-              height: "50px",
-              marginTop: "20px",
-            }}
-          >
-            Mint NFT
-          </button>
         </div>
       </div>
     </div>
