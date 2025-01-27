@@ -20,9 +20,19 @@ export const validateGenerateRequest = (
       .isString()
       .isLength({ max: 500 })
       .withMessage("Negative prompt exceeds 500 characters"),
-    body("width").optional().isInt({ min: 256, max: 1024 }),
-    body("height").optional().isInt({ min: 256, max: 1024 }),
-    body("format").optional().isString().isIn(["jpeg", "png"]),
+    body("width")
+      .optional()
+      .isInt({ min: 256, max: 1024 })
+      .withMessage("Width must be between 256 and 1024"),
+    body("height")
+      .optional()
+      .isInt({ min: 256, max: 1024 })
+      .withMessage("Height must be between 256 and 1024"),
+    body("format")
+      .optional()
+      .isString()
+      .isIn(["jpeg", "png"])
+      .withMessage("Invalid format. Must be 'jpeg' or 'png'"),
   ];
 
   Promise.all(validations.map((validation) => validation.run(req))).then(() => {
