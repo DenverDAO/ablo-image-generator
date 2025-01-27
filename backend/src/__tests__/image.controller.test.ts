@@ -16,6 +16,7 @@ describe("generateImage Controller", () => {
     // Setup mock request and response objects
     req = {
       body: {
+        model: "openfree/pepe",
         prompt: "A cat wearing a hat",
         negativePrompt: "blurry",
         width: 512,
@@ -53,6 +54,8 @@ describe("generateImage Controller", () => {
       negativePrompt: "blurry",
       width: 512,
       height: 512,
+      format: "jpeg",
+      model: "openfree/pepe",
     });
 
     // Verify the response
@@ -80,6 +83,8 @@ describe("generateImage Controller", () => {
       negativePrompt: undefined,
       width: 512,
       height: 512,
+      format: "jpeg",
+      model: undefined,
     });
 
     // Verify the response
@@ -103,6 +108,8 @@ describe("generateImage Controller", () => {
       negativePrompt: "blurry",
       width: 512,
       height: 512,
+      format: "jpeg",
+      model: "openfree/pepe",
     });
 
     // Verify the error response
@@ -125,6 +132,8 @@ describe("generateImage Controller", () => {
       negativePrompt: "blurry",
       width: 512,
       height: 512,
+      format: "jpeg",
+      model: "openfree/pepe",
     });
 
     // Verify the error response
@@ -154,6 +163,8 @@ describe("generateImage Controller", () => {
       negativePrompt: undefined,
       width: -100,
       height: 0,
+      format: "jpeg",
+      model: undefined,
     });
 
     // Verify the response
@@ -182,26 +193,8 @@ describe("generateImage Controller", () => {
       negativePrompt: "blurry, low quality",
       width: 512,
       height: 512,
-    });
-  });
-
-  it("should handle missing negative prompt", async () => {
-    req.body = {
-      prompt: "A cat wearing a hat",
-      width: 512,
-      height: 512,
-    };
-
-    const mockImageBuffer = Buffer.from("mock-image-data");
-    (HfService.generateImage as jest.Mock).mockResolvedValue(mockImageBuffer);
-
-    await generateImage(req as GenerateImageRequest, res as Response);
-
-    expect(HfService.generateImage).toHaveBeenCalledWith({
-      prompt: "A cat wearing a hat",
-      negativePrompt: undefined,
-      width: 512,
-      height: 512,
+      format: "jpeg",
+      model: undefined,
     });
   });
 });
