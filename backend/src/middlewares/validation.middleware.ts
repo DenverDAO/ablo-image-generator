@@ -8,6 +8,7 @@ export const validateGenerateRequest = (
   next: NextFunction
 ) => {
   const validations = [
+    body("model").optional().isString(),
     body("prompt")
       .isString()
       .notEmpty()
@@ -21,6 +22,7 @@ export const validateGenerateRequest = (
       .withMessage("Negative prompt exceeds 500 characters"),
     body("width").optional().isInt({ min: 256, max: 1024 }),
     body("height").optional().isInt({ min: 256, max: 1024 }),
+    body("format").optional().isString().isIn(["jpeg", "png"]),
   ];
 
   Promise.all(validations.map((validation) => validation.run(req))).then(() => {
