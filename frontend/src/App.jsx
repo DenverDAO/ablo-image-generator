@@ -2,7 +2,6 @@ import { useState } from "react";
 import "./App.css";
 
 const TRENDING_MODELS = [
-  { id: "ostris/Flex.1-alpha", name: "Flex.1 Alpha" },
   { id: "black-forest-labs/FLUX.1-dev", name: "FLUX.1 Dev" },
   {
     id: "stabilityai/stable-diffusion-3.5-large",
@@ -129,88 +128,130 @@ function App() {
 
   return (
     <div className="App">
-      <h1>HuggingFace Image Wizard</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="input-group">
-          <label>Model:</label>
-          <select
-            value={selectedModel}
-            onChange={(e) => setSelectedModel(e.target.value)}
-          >
-            {TRENDING_MODELS.map((model) => (
-              <option key={model.id} value={model.id}>
-                {model.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <h1>
+        🧙 Huggi<span className="nftTitle">NF</span>ace
+        <span className="nftTitle">T</span> Wizard 🧙
+      </h1>
+      <div className="content-wrapper">
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Model</label>
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+            >
+              {TRENDING_MODELS.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
+          <div className="input-group">
+            <label>Prompt</label>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Enter image prompt..."
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label>
+              Negative Prompt&nbsp;
+              <span
+                className="tooltip"
+                title="Specify what the model should avoid generating"
+              >
+                ℹ️
+              </span>
+            </label>
+            <textarea
+              value={negativePrompt}
+              onChange={(e) => setNegativePrompt(e.target.value)}
+              placeholder="Enter negative prompt (optional)"
+              maxLength={500}
+            />
+          </div>
+
+          <div className="input-group dimensions-group">
+            <div>
+              <label>Width:</label>
+              <select
+                value={width}
+                onChange={(e) => setWidth(Number(e.target.value))}
+              >
+                <option value={256}>256</option>
+                <option value={512}>512</option>
+                <option value={768}>768</option>
+              </select>
+            </div>
+            <div>
+              <label>Height:</label>
+              <select
+                value={height}
+                onChange={(e) => setHeight(Number(e.target.value))}
+              >
+                <option value={256}>256</option>
+                <option value={512}>512</option>
+                <option value={768}>768</option>
+              </select>
+            </div>
+            <div>
+              <label>Format:</label>
+              <select
+                value={format}
+                onChange={(e) => setFormat(e.target.value)}
+              >
+                <option value="jpeg">JPEG</option>
+                <option value="png">PNG</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Generating..." : "Generate Image"}
+          </button>
+
+          {error && <div className="error">{error}</div>}
+        </form>
         <div>
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Enter image prompt..."
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label>
-            Negative Prompt:
-            <span
-              className="tooltip"
-              title="Specify what the model should avoid generating"
-            >
-              ℹ️
-            </span>
-          </label>
-          <textarea
-            value={negativePrompt}
-            onChange={(e) => setNegativePrompt(e.target.value)}
-            placeholder="Enter negative prompt (optional)"
-            maxLength={500}
-          />
-        </div>
-
-        <div className="dimensions-group">
-          <div>
-            <label>Width:</label>
-            <select
-              value={width}
-              onChange={(e) => setWidth(Number(e.target.value))}
-            >
-              <option value={256}>256</option>
-              <option value={512}>512</option>
-              <option value={768}>768</option>
-            </select>
+          <div
+            className={`image-container ${!image ? "empty" : ""}`}
+            style={{
+              width: `${width}px`,
+              height: `${height}px`,
+            }}
+          >
+            {image ? (
+              <img
+                src={image}
+                alt="Generated"
+                className="preview-image"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain", // Ensures the image scales properly
+                }}
+              />
+            ) : (
+              <div className="placeholder-text"></div>
+            )}
           </div>
-          <div>
-            <label>Height:</label>
-            <select
-              value={height}
-              onChange={(e) => setHeight(Number(e.target.value))}
-            >
-              <option value={256}>256</option>
-              <option value={512}>512</option>
-              <option value={768}>768</option>
-            </select>
-          </div>
-          <div>
-            <label>Format:</label>
-            <select value={format} onChange={(e) => setFormat(e.target.value)}>
-              <option value="jpeg">JPEG</option>
-              <option value="png">PNG</option>
-            </select>
-          </div>
+          <button
+            hidden={!image}
+            style={{
+              width: "10rem",
+              height: "50px",
+              marginTop: "20px",
+            }}
+          >
+            Mint NFT
+          </button>
         </div>
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Generating..." : "Generate Image"}
-        </button>
-      </form>
-
-      {error && <div className="error">{error}</div>}
-      {image && <img src={image} alt="Generated" className="preview-image" />}
+      </div>
     </div>
   );
 }
