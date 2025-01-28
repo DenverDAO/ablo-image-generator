@@ -82,8 +82,8 @@ function App() {
     }
 
     try {
-      const fetchUrl = import.meta.env.SPACE_HOST
-        ? `https://${import.meta.env.SPACE_HOST}`
+      const fetchUrl = import.meta.env.PROD
+        ? "https://proofoftom-text-to-image.hf.space"
         : "http://localhost:7860";
       const response = await fetch(`${fetchUrl}/api/generate`, {
         method: "POST",
