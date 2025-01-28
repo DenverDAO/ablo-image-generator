@@ -1,16 +1,3 @@
-:root {
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --background: #0f172a;
-  --surface: #1e293b;
-  --text: #f8fafc;
-  --text-secondary: #94a3b8;
-  --error: #ef4444;
-  --success: #22c55e;
-  --border-radius: 8px;
-  --transition: all 0.2s ease;
-}
-
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -46,13 +33,6 @@ h1 {
   }
 }
 
-form {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
 .input-group {
   display: flex;
   flex-direction: column;
@@ -62,48 +42,6 @@ form {
 .input-group label {
   font-weight: 500;
   color: var(--text-secondary);
-}
-
-select,
-textarea,
-button {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--surface);
-  background: var(--background);
-  color: var(--text);
-  transition: var(--transition);
-}
-
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-textarea {
-  min-height: 120px;
-  resize: vertical;
-  width: auto;
-}
-
-button {
-  background: var(--primary);
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-}
-
-button:hover {
-  background: var(--primary-hover);
-}
-
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
 }
 
 .dimensions-group {
@@ -160,9 +98,5 @@ button:disabled {
 .tooltip {
   cursor: help;
   font-size: 0.8em;
-  color: var(--primary);
-}
-
-.nftTitle {
   color: var(--primary);
 }
