@@ -82,7 +82,10 @@ function App() {
     }
 
     try {
-      const response = await fetch(`http://localhost:7860/api/generate`, {
+      const fetchUrl = import.meta.env.SPACE_HOST
+        ? `https://${import.meta.env.SPACE_HOST}`
+        : "http://localhost:7860";
+      const response = await fetch(`${fetchUrl}/api/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
