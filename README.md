@@ -1,3 +1,12 @@
+---
+title: Text To Image
+emoji: 🌖
+colorFrom: indigo
+colorTo: pink
+sdk: docker
+pinned: false
+---
+
 # Hugging Face Image Generator
 
 ![Mountain Sunset](./mountain_sunset.png)

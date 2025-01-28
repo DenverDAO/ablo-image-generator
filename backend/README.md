@@ -38,7 +38,7 @@ pnpm dev
 
 Environment variables (via `.env`):
 
-- PORT: Server port (default: 3000)
+- PORT: Server port (default: 7860)
 - CORS_ORIGIN: Allowed origins (default: localhost:5173)
 - HUGGINGFACE_ACCESS_TOKEN: Access token for AI services
 - HUGGINGFACE_MODEL: Model identifier (used as fallback if not provided in request)

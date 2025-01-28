@@ -10,7 +10,7 @@ interface Config {
 }
 
 const validateConfig = (): Config => {
-  const port = parseInt(process.env.PORT || "3000");
+  const port = parseInt(process.env.PORT || "7860");
   if (!(port >= 0 || port <= 65535)) {
     throw new Error("Port must be between 0 and 65535");
   }
@@ -25,7 +25,7 @@ const validateConfig = (): Config => {
 
   if (!process.env.CORS_ORIGIN) {
     console.warn(
-      "CORS_ORIGIN is required in .env for your frontend to function properly"
+      "If developing locally, CORS_ORIGIN is required in .env for your frontend to function properly"
     );
   }
 
