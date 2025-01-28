@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 
 import { config } from "./config/env";
 import { router } from "./routes/api";
@@ -22,11 +23,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", router);
 
 // Serve static files from the React build
-app.use(express.static("../frontend/dist"));
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
 // Handle React routing; send all other requests to React app
 app.get("*", (_req, res) => {
-  res.sendFile("../frontend/dist/index.html");
+  res.sendFile(path.join(__dirname, "../../frontend/dist", "index.html"));
 });
 
 // Error handler middleware
