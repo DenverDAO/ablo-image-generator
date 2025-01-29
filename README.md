@@ -4,8 +4,9 @@
 
 ### Quick start with Docker
 
-```
+```bash
 git clone https://github.com/proofoftom/hf-image-monorepo
+cd hf-image-monorepo
 . ./docker-run.sh
 ```
 
