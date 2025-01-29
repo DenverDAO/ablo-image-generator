@@ -4,23 +4,33 @@ FROM node:20-slim
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY frontend/package*.json frontend/
-COPY backend/package*.json backend/
+# Create directories for frontend and backend
+RUN mkdir -p frontend backend
+
+# Copy package files first for better caching
+COPY frontend/package*.json ./frontend/
+COPY backend/package*.json ./backend/
 
 # Install dependencies
-RUN cd frontend && npm install
-RUN cd backend && npm install
+WORKDIR /app/frontend
+RUN npm install
+WORKDIR /app/backend
+RUN npm install
 
-# Copy project files
-COPY frontend/ frontend/
-COPY backend/ backend/
+# Copy source files
+WORKDIR /app
+COPY frontend/ ./frontend/
+COPY backend/ ./backend/
 
-# Build server
-RUN cd backend && npm run build
+# Build applications
+WORKDIR /app/backend
+RUN npm run build
 
-# Build React app
-RUN cd frontend && npm run build
+WORKDIR /app/frontend
+RUN npm run build
+
+# Set final working directory
+WORKDIR /app
 
 # Expose port
 EXPOSE 7860

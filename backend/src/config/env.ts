@@ -20,7 +20,9 @@ const validateConfig = (): Config => {
     process.env.HUGGINGFACE_ACCESS_TOKEN ===
       "your_huggingface_access_token_here"
   ) {
-    throw new Error("HUGGINGFACE_ACCESS_TOKEN is required in .env");
+    throw new Error(
+      "HUGGINGFACE_ACCESS_TOKEN is required, you can get one at https://huggingface.co/settings/tokens"
+    );
   }
 
   if (!process.env.CORS_ORIGIN) {

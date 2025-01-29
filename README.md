@@ -1,15 +1,13 @@
----
-title: Text To Image
-emoji: 🌖
-colorFrom: indigo
-colorTo: pink
-sdk: docker
-pinned: false
----
-
 # Hugging Face Image Generator
 
 ![Mountain Sunset](./mountain_sunset.png)
+
+### Quick start with Docker
+
+```
+git clone https://github.com/proofoftom/hf-image-monorepo
+. ./docker-run.sh
+```
 
 ## [Backend](./backend)
 

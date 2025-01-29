@@ -1,5 +1,5 @@
 {
-  "name": "hf-image-backend",
+  "name": "hf-text-to-image-server",
   "version": "1.0.0",
   "main": "dist/server.js",
   "scripts": {
