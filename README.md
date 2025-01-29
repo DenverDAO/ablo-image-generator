@@ -42,12 +42,12 @@ src/
 └── server.ts                    - Main application entry point
 ```
 
-### Getting Started
+### Starting the server
 
 ```bash
 cd backend
 pnpm install
-cp .env.example .env # Update with your Hugging Face Access Token
+cp .env.example .env # Update with your Hugging Face Access Token and model
 pnpm dev
 ```
 
@@ -114,10 +114,11 @@ pnpm test
 
 ![App Screenshot](./screenshot.png)
 
-### Getting Started
+### Starting the frontend
+
+After [starting the server](#starting-the-server):
 
 ```bash
-# After starting the backend (see above)
 cd frontend
 pnpm install
 pnpm dev
