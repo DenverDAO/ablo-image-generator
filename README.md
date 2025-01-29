@@ -4,11 +4,15 @@
 
 ### Quick start with Docker
 
+For quickly testing out the app:
+
 ```bash
-git clone https://github.com/proofoftom/hf-image-monorepo
-cd hf-image-monorepo
+git clone https://github.com/proofoftom/hf-image-monorepo image-wizard
+cd image-wizard
 . ./docker-run.sh
 ```
+
+For development, see below.
 
 ## [Backend](./backend)
 
@@ -113,6 +117,7 @@ pnpm test
 ### Getting Started
 
 ```bash
+# After starting the backend (see above)
 cd frontend
 pnpm install
 pnpm dev

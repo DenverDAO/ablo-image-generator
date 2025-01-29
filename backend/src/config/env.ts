@@ -27,14 +27,15 @@ const validateConfig = (): Config => {
 
   if (!process.env.CORS_ORIGIN) {
     console.warn(
-      "If developing locally, CORS_ORIGIN is required in .env for your frontend to function properly"
+      "If the frontend has a different host, CORS_ORIGIN is required for it to function properly"
     );
   }
 
   return {
     port,
     corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
-    huggingfaceToken: process.env.HUGGINGFACE_ACCESS_TOKEN,
+    // TODO: Environment variables don't seem to be getting passed to the docker container. This is a temporary workaround.
+    huggingfaceToken: process.env.HUGGINGFACE_ACCESS_TOKEN || "",
     huggingfaceModel:
       process.env.HUGGINGFACE_MODEL || "black-forest-labs/FLUX.1-schnell",
   };
