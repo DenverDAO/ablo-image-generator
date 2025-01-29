@@ -20,8 +20,8 @@ const validateConfig = (): Config => {
     process.env.HUGGINGFACE_ACCESS_TOKEN ===
       "your_huggingface_access_token_here"
   ) {
-    throw new Error(
-      "HUGGINGFACE_ACCESS_TOKEN is required, you can get one at https://huggingface.co/settings/tokens"
+    console.warn(
+      "HUGGINGFACE_ACCESS_TOKEN is required to access one's own services, you can get one at https://huggingface.co/settings/tokens"
     );
   }
 
