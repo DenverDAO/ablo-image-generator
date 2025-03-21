@@ -68,3 +68,43 @@ export const validateRegisterRequest = [
     next();
   },
 ];
+
+export const validatePrepareMetadataRequest = [
+  body("imageUrl")
+    .isString()
+    .trim()
+    .notEmpty()
+    .withMessage("Image URL or base64 data is required"),
+  body("prompt")
+    .isString()
+    .trim()
+    .isLength({ min: 1, max: 500 })
+    .withMessage("Prompt must be between 1 and 500 characters"),
+  body("style")
+    .optional()
+    .isString()
+    .trim()
+    .withMessage("Style must be a string"),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
+
+export const validateVerifyMintRequest = [
+  body("txHash")
+    .isString()
+    .trim()
+    .matches(/^0x[a-fA-F0-9]{64}$/)
+    .withMessage("Transaction hash must be a valid Ethereum transaction hash"),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+];

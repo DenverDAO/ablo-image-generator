@@ -1,41 +1,42 @@
-import Onboard from '@web3-onboard/core';
-import injectedModule from '@web3-onboard/injected-wallets';
-import { toast } from 'sonner';
+import { http, createConfig } from 'wagmi';
+import { baseSepolia } from 'wagmi/chains';
+import { injected } from 'wagmi/connectors';
 
-const injected = injectedModule();
+export const BASE_SEPOLIA_CHAIN = baseSepolia;
 
-export const BASE_SEPOLIA_CHAIN = {
-    id: '0x14a34',
-    token: 'ETH',
-    label: 'Base Sepolia',
-    rpcUrl: 'https://sepolia.base.org',
+// Create wagmi config with baseSepolia chain and injected connector
+export const config = createConfig({
+    chains: [baseSepolia],
+    transports: {
+        [baseSepolia.id]: http(),
+    },
+    connectors: [
+        injected(),
+    ],
+});
+
+// Contract addresses - to be moved to environment variables
+export const contractAddresses = {
+    spgNftContract: '0x...' // Replace with actual contract address
 };
 
-const chains = [BASE_SEPOLIA_CHAIN];
+// Helper function to format addresses for display
+export function formatAddress(address: string): string {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
 
-export const web3Onboard = Onboard({
-    wallets: [injected],
-    chains,
-    appMetadata: {
-        name: 'Ablo Image Generator',
-        icon: '<svg>...</svg>', // TODO: Add app icon
-        description: 'Generate and mint AI images as NFTs',
-    },
-    connect: {
-        autoConnectLastWallet: true,
-    },
-    accountCenter: {
-        mobile: {
-            enabled: false,
-        },
-        desktop: {
-            enabled: false,
-        },
-    },
-    notify: {
-        desktop: {
-            enabled: false,
-            transactionHandler: () => { },
-        },
-    },
-}); 
+// Helper function to check if MetaMask is installed
+export function isMetaMaskInstalled(): boolean {
+    return typeof window !== 'undefined' && window.ethereum !== undefined;
+}
+
+// Helper function to get etherscan tx url
+export function getExplorerTxUrl(txHash: string): string {
+    return `${baseSepolia.blockExplorers.default.url}/tx/${txHash}`;
+}
+
+// Helper function to get etherscan address url
+export function getExplorerAddressUrl(address: string): string {
+    return `${baseSepolia.blockExplorers.default.url}/address/${address}`;
+} 

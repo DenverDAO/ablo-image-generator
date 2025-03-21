@@ -10,17 +10,32 @@ export interface GenerateImageResponse {
     ipfsHash: string;
 }
 
-export interface MintNftRequest {
+export interface PrepareMetadataRequest {
     imageUrl: string;
     prompt: string;
     style: string;
-    walletAddress: string;
 }
 
-export interface MintNftResponse {
-    transactionHash: string;
-    ipAssetId: string;
-    nftTokenId: string;
+export interface PrepareMetadataResponse {
+    imageIpfsHash: string;
+    metadataIpfsHash: string;
+    ipMetadata: {
+        ipMetadataURI: string;
+        ipMetadataHash: string;
+        nftMetadataURI: string;
+        nftMetadataHash: string;
+    };
+}
+
+export interface VerifyMintRequest {
+    txHash: string;
+}
+
+export interface VerifyMintResponse {
+    status: 'success' | 'pending' | 'failed';
+    ipAssetId?: string;
+    tokenId?: string;
+    error?: string;
 }
 
 class ApiService {
@@ -38,7 +53,7 @@ class ApiService {
 
         if (!response.ok) {
             const error = await response.json().catch(() => ({}));
-            throw new Error(error.message || 'API request failed');
+            throw new Error(error.message || `API request failed with status ${response.status}`);
         }
 
         return response.json();
@@ -53,8 +68,19 @@ class ApiService {
         });
     }
 
-    async mintNft(data: MintNftRequest): Promise<MintNftResponse> {
-        return this.request<MintNftResponse>('/mint', {
+    async prepareMetadata(
+        data: PrepareMetadataRequest
+    ): Promise<PrepareMetadataResponse> {
+        return this.request<PrepareMetadataResponse>('/prepare-metadata', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    }
+
+    async verifyMint(
+        data: VerifyMintRequest
+    ): Promise<VerifyMintResponse> {
+        return this.request<VerifyMintResponse>('/verify-mint', {
             method: 'POST',
             body: JSON.stringify(data),
         });
