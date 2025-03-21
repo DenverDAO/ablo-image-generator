@@ -41,6 +41,8 @@
 - Zustand for state management
 - React Hook Form with Zod for form handling and validation
 - Sonner for toast notifications
+- Web3-Onboard for wallet connection
+- Viem for blockchain interactions
 
 ### Component Structure
 
@@ -85,6 +87,35 @@
 - Fetch API for backend communication
 - Error handling with toast notifications
 - Loading states during API calls
+
+### Web3 Integration
+
+1. Wallet Connection
+
+   - Web3-Onboard for multi-wallet support
+   - Injected wallet provider (MetaMask, etc.)
+   - Connection state management with Zustand
+   - Automatic reconnection support
+
+2. Network Configuration
+
+   - Base Sepolia testnet
+   - Chain ID: 0x14a34
+   - RPC URL: https://sepolia.base.org
+   - Network switching support (planned)
+
+3. Components
+
+   - `useWallet` hook for wallet state management
+   - Wallet connection button in Header
+   - Connection status display
+   - Address display with truncation
+
+4. State Management
+   - Wallet connection status
+   - Connected address
+   - Network status
+   - Transaction state
 
 ## Development Setup
 

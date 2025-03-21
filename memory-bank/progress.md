@@ -29,6 +29,7 @@
    - ✅ Form handling with React Hook Form
 
 2. UI Components
+
    - ✅ Layout structure (Header, Footer)
    - ✅ Image generation form
    - ✅ Generated image display
@@ -36,13 +37,19 @@
    - ✅ Loading states
    - ✅ Error handling
 
+3. Web3 Integration
+   - ✅ Web3-Onboard setup
+   - ✅ Wallet connection UI
+   - ✅ Connection state management
+   - ✅ Base Sepolia network configuration
+
 ## In Progress Features
 
 1. Web3 Integration
 
-   - 🔄 Wallet connection
    - 🔄 Transaction signing
    - 🔄 Network handling
+   - 🔄 Error recovery
 
 2. Story Protocol Integration
    - 🔄 IP Asset registration
@@ -72,7 +79,7 @@
    - Environment validation improvements needed
 
 2. Frontend
-   - Wallet connection not implemented
+   - Network switching not implemented
    - NFT minting interface pending
    - Story Protocol integration pending
    - API error handling needs refinement
@@ -81,7 +88,7 @@
 
 1. Immediate Priority
 
-   - Implement Web3-Onboard for wallet connection
+   - Implement network switching
    - Add NFT minting functionality
    - Integrate Story Protocol SDK
    - Enhance error handling and loading states
