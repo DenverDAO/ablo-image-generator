@@ -30,6 +30,62 @@
 - **Story Protocol**: Blockchain protocol for IP registration and management
 - **Base Sepolia**: Ethereum-compatible testnet for development
 
+## Frontend Architecture
+
+### Core Technologies
+
+- React with TypeScript for type safety
+- Vite as the build tool
+- Tailwind CSS for styling
+- shadcn/ui for component library
+- Zustand for state management
+- React Hook Form with Zod for form handling and validation
+- Sonner for toast notifications
+
+### Component Structure
+
+1. Layout Components (`/src/components/layout/`)
+
+   - `Layout.tsx`: Main layout wrapper
+   - `Header.tsx`: App header with wallet connection
+   - `Footer.tsx`: App footer with copyright
+
+2. Feature Components (`/src/components/`)
+
+   - `ImageGenerationForm.tsx`: Form for image generation
+   - `GeneratedImage.tsx`: Display and actions for generated images
+
+3. UI Components (`/src/components/ui/`)
+   - Shadcn/ui components (button, card, form, input, textarea, dialog)
+
+### State Management
+
+- Zustand store in `src/lib/store.ts`
+- Manages:
+  - Wallet connection state
+  - Image generation state
+  - Generated image data
+
+### Styling
+
+- Tailwind CSS with custom configuration
+- Custom color scheme using CSS variables
+- Dark mode support
+- Responsive design patterns
+
+### Form Handling
+
+- React Hook Form for form state
+- Zod for schema validation
+- Custom form components with error handling
+- Style selection with datalist
+
+### API Integration
+
+- Fetch API for backend communication
+- Error handling with toast notifications
+- Loading states during API calls
+
 ## Development Setup
 
 1. **Environment Variables**:
@@ -62,29 +118,6 @@
    ./docker-run.sh
    ```
 
-## Technical Constraints
-
-### Story Protocol Integration Constraints
-
-1. **Network Support**: Story Protocol currently only supports Base Mainnet and Base Sepolia testnet.
-2. **Gas Fees**: Users will need Base ETH to pay for gas fees when registering IP Assets.
-3. **Transaction Signing**: Users must sign blockchain transactions through a connected wallet.
-4. **Metadata Size**: There are limits to how much metadata can be stored directly on-chain.
-
-### Hugging Face API Constraints
-
-1. **Rate Limits**: Free tier has usage limits per model and account.
-2. **Latency**: Image generation can take several seconds depending on model size.
-3. **Model Availability**: Some models may be temporarily unavailable.
-4. **Cost**: Higher usage may require paid API plans.
-
-### Application Constraints
-
-1. **Image Storage**: Need to determine how long to store generated images.
-2. **Authentication**: Balancing Web2 and Web3 authentication methods.
-3. **Cross-Device Experience**: Ensuring wallet connections work across different devices.
-4. **Performance**: Handling potentially long blockchain confirmation times.
-
 ## Dependencies
 
 The key dependencies include:
@@ -104,6 +137,17 @@ The key dependencies include:
   }
 }
 ```
+
+### Frontend Dependencies
+
+- React and React DOM
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- Zustand for state management
+- React Hook Form and Zod
+- Sonner for notifications
+- Web3-Onboard (pending implementation)
 
 ## Integration Points
 

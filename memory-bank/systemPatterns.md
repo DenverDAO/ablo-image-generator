@@ -370,3 +370,86 @@ sequenceDiagram
 - Metrics collection
 - Automated deployment
 - Scaling strategy
+
+## Frontend Architecture
+
+### Component Architecture
+
+- Atomic design pattern
+- Feature-based organization
+- Shared component library
+- Composition over inheritance
+- Container/Presenter pattern
+
+### State Management
+
+- Zustand for global state
+- React Query for server state
+- Local state for UI components
+- Persistent storage patterns
+- State hydration strategies
+
+### Routing & Navigation
+
+- React Router with code splitting
+- Protected routes
+- Route-based code organization
+- Dynamic route generation
+- Navigation state management
+
+### UI/UX Patterns
+
+- Responsive design patterns
+- Component composition
+- Design token system
+- Theme switching
+- Accessibility patterns
+
+### Data Flow
+
+- Unidirectional data flow
+- Event-driven architecture
+- Async operation handling
+- Error boundary implementation
+- Loading state management
+
+### Integration Patterns
+
+1. Wallet Integration
+
+   - Blocknative Onboard integration
+   - Multi-wallet support
+   - Account abstraction
+   - Transaction management
+   - Network switching
+
+2. IPFS Integration
+
+   - Client-side node
+   - Gateway fallback
+   - Content verification
+   - Pinning management
+   - Offline support
+
+3. Blockchain Integration
+   - Transaction tracking
+   - Event listening
+   - Contract interaction
+   - Error handling
+   - Network management
+
+### Performance Patterns
+
+- Code splitting
+- Lazy loading
+- Resource caching
+- Service worker implementation
+- Performance monitoring
+
+### Testing Patterns
+
+- Component testing
+- Integration testing
+- Accessibility testing
+- Visual regression testing
+- Performance testing
