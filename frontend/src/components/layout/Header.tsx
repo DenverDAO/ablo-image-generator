@@ -2,8 +2,17 @@ import { Button } from '@/components/ui/button';
 import { useWallet } from '@/lib/hooks/useWallet';
 
 export function Header() {
-  const { connect, disconnect, connecting, address, isConnected, wallet } =
-    useWallet();
+  const {
+    connect,
+    disconnect,
+    connecting,
+    settingChain,
+    address,
+    isConnected,
+    isCorrectNetwork,
+    wallet,
+    handleNetworkSwitch,
+  } = useWallet();
 
   const handleWalletClick = () => {
     if (isConnected && wallet) {
@@ -22,9 +31,19 @@ export function Header() {
           </h1>
         </div>
         <div className="flex items-center gap-4">
+          {isConnected && !isCorrectNetwork && (
+            <Button
+              onClick={handleNetworkSwitch}
+              disabled={settingChain}
+              variant="destructive"
+              size="sm"
+            >
+              {settingChain ? 'Switching...' : 'Switch to Base Sepolia'}
+            </Button>
+          )}
           <Button
             onClick={handleWalletClick}
-            disabled={connecting}
+            disabled={connecting || settingChain}
             variant={isConnected ? 'outline' : 'default'}
           >
             {connecting
