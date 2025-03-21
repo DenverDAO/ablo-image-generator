@@ -126,37 +126,43 @@ export class StoryProtocolService {
     }
 
     /**
-     * TODO: Asset retrieval functionality is currently blocked
-     * 
-     * The Story Protocol SDK does not clearly document methods for retrieving IP assets.
-     * Based on our investigation of the SDK documentation and examples:
-     * 1. The correct method for asset retrieval is not documented
-     * 2. Multiple attempted approaches (get, getAsset, readIpAsset, etc.) resulted in type errors
-     * 3. The SDK may not currently expose this functionality
-     * 
-     * Next steps:
-     * 1. Implement local caching of asset details after successful registration
-     * 2. Monitor SDK updates for proper asset retrieval methods
-     * 3. Consider reaching out to Story Protocol team for guidance
-     * 
-     * For reference see:
-     * - https://docs.story.foundation/docs/sdk-overview
-     * - https://github.com/storyprotocol/typescript-tutorial
+     * Retrieves IP asset details using Story Protocol's HTTP API
+     * @see https://docs.story.foundation/reference/post_api-v3-assets
      */
-    /*
     async getAssetDetails(assetId: string) {
         try {
-            const contract = await this.client.ipAsset.getContract();
-            const asset = await contract.read.getAsset([assetId]);
-            if (!asset.ipMetadataURI) {
-                throw new Error('IP metadata URI not found');
+            const response = await fetch('https://api.storyapis.com/api/v3/assets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    where: {
+                        id: assetId
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch asset details: ${response.statusText}`);
             }
-            const metadata = await this.ipfsService.getMetadata(asset.ipMetadataURI);
-            return { ...asset, metadata };
+
+            const data = await response.json();
+            if (!data.data?.[0]) {
+                throw new Error('Asset not found');
+            }
+
+            // If we have IPFS metadata, fetch it
+            const asset = data.data[0];
+            if (asset.ipMetadataURI) {
+                const metadata = await this.ipfsService.getMetadata(asset.ipMetadataURI);
+                return { ...asset, metadata };
+            }
+
+            return asset;
         } catch (error) {
             logger.error('Error getting IP asset details:', error);
             throw error;
         }
     }
-    */
 } 
