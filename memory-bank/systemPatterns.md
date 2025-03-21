@@ -280,3 +280,93 @@ sequenceDiagram
 - Check frontend integration
 - Validate user experience
 - Test network handling
+
+## Service-Based Architecture
+
+- Core services are implemented as singleton classes
+- Services handle specific domains (IPFS, Story Protocol, Image Generation)
+- Services are initialized at startup
+- Dependency injection for service dependencies
+- Clear separation of concerns between services
+
+## Service Patterns
+
+### IPFS Service
+
+- Singleton pattern with lazy initialization
+- Persistent blockstore using filesystem
+- Automatic directory management
+- Configurable retry mechanism
+- Gateway fallback for content verification
+- Content pinning with configuration
+- Error handling with detailed logging
+
+### Story Protocol Service
+
+- Singleton pattern
+- Blockchain interaction via SDK
+- PIL terms configuration
+- Asset registration and retrieval
+- Transaction error handling
+- Environment-based configuration
+- Testnet/mainnet support
+
+### Image Generation Service
+
+- Hugging Face API integration
+- Model configuration
+- Format options (JPEG/PNG)
+- Dimension customization
+- Negative prompt support
+- Error handling and validation
+
+## Error Handling Patterns
+
+- Custom error types for different scenarios
+- Detailed error logging
+- Graceful degradation
+- Retry mechanisms where appropriate
+- User-friendly error messages
+- Transaction failure handling
+
+## Configuration Patterns
+
+- Environment-based configuration
+- Validation at startup
+- Sensible defaults
+- Documentation in .env.example
+- Type-safe configuration objects
+
+## Testing Patterns
+
+- Unit tests for services
+- Integration tests for endpoints
+- Mock blockchain interactions
+- Test environment configuration
+- Consistent test structure
+
+## Security Patterns
+
+- Environment variable protection
+- Private key management
+- API key security
+- Rate limiting
+- Input validation
+- CORS configuration
+
+## Logging Patterns
+
+- Structured logging with Winston
+- Log levels for different environments
+- Transaction tracking
+- Error context preservation
+- Performance monitoring
+
+## Future Considerations
+
+- Caching layer implementation
+- Queue system for long operations
+- Monitoring system integration
+- Metrics collection
+- Automated deployment
+- Scaling strategy

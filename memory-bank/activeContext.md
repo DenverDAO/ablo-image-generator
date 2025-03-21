@@ -1,37 +1,36 @@
 # Active Context: Story Protocol Integration
 
-## Current Focus
+## Current Work Focus
 
-- Story Protocol integration for IP asset registration
-- Image registration endpoint implementation
-- Environment configuration for blockchain interaction
+- Implementing robust IPFS integration for decentralized storage
+- Story Protocol integration for registering and managing AI-generated images as IP assets
+- Successfully implemented image registration using `mintAndRegisterIpAssetWithPilTerms`
+- Identified gap in SDK documentation regarding asset retrieval methods
 
 ## Recent Changes
 
-- Implemented `StoryProtocolService` for blockchain interactions
-- Added image registration endpoint with validation
-- Updated environment configuration for Story Protocol settings
-- Created request types and validation middleware
-- Integrated with Base Sepolia testnet
+- Implemented persistent IPFS storage with Helia client
+- Added comprehensive IPFS configuration options
+- Implemented retry mechanism and error handling for IPFS operations
+- Added automatic data directory management
+- Added Story Protocol service with successful image registration functionality
+- Configured environment variables for all integrations
 
 ## Active Decisions
 
-1. Using Base Sepolia testnet for development
-2. Implementing PIL (Programmable IP License) terms with default settings:
-   - Transferable assets
-   - 50% commercial revenue share
-   - Attribution required
-   - Derivatives allowed with attribution
-3. Placeholder IPFS implementation (to be completed)
-4. Using environment variables for blockchain configuration
+- Using filesystem-based blockstore for IPFS persistence
+- Implementing gateway fallback for content verification
+- Configurable pinning behavior for metadata
+- Need to determine correct method for retrieving IP assets
+- Current SDK version may not expose direct methods for asset retrieval
 
 ## Next Steps
 
-1. Implement IPFS storage for images and metadata
-2. Add frontend components for image registration
-3. Implement wallet connection for transaction signing
-4. Add tests for Story Protocol integration
-5. Create documentation for IP registration process
+1. Implement local caching system for IP asset details
+2. Add comprehensive testing for IPFS operations
+3. Monitor Story Protocol SDK updates for improved asset retrieval methods
+4. Consider implementing Pinata or similar service integration for additional reliability
+5. Add monitoring and metrics for IPFS operations
 
 ## Current Considerations
 
@@ -40,3 +39,10 @@
 3. **Error Handling**: Comprehensive error handling for blockchain transactions
 4. **User Experience**: Making blockchain interactions user-friendly
 5. **Testing**: Need comprehensive tests for blockchain interactions
+
+## Known Issues
+
+- Story Protocol SDK does not clearly document methods for retrieving IP assets
+- Current implementation of `getAssetDetails` needs revision once correct method is identified
+- IPFS operations may experience timeouts or network issues
+- Need to handle IPFS node connectivity issues gracefully

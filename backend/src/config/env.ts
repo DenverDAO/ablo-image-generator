@@ -1,12 +1,13 @@
 import dotenv from "dotenv";
-import { cleanEnv, str, port, url } from "envalid";
+import { cleanEnv, str, port, url, num, bool } from "envalid";
 
 dotenv.config();
 
 export const config = cleanEnv(process.env, {
   // Server Configuration
-  PORT: port({ default: 3000 }),
-  CORS_ORIGIN: str({ default: "http://localhost:5173" }),
+  PORT: num({ default: 3000 }),
+  NODE_ENV: str({ choices: ['development', 'test', 'production'], default: 'development' }),
+  CORS_ORIGIN: str({ default: '*' }),
 
   // Hugging Face Configuration
   HUGGINGFACE_ACCESS_TOKEN: str(),
@@ -37,8 +38,9 @@ export const config = cleanEnv(process.env, {
     desc: "WIP Token Address",
     example: "0x1234..."
   }),
+  NFT_CONTRACT_ADDRESS: str(),
 
-  // IPFS Configuration (TODO: Implement)
+  // IPFS Configuration
   IPFS_API_KEY: str({
     desc: "IPFS API Key (e.g., Pinata)",
     default: ""
@@ -47,8 +49,13 @@ export const config = cleanEnv(process.env, {
     desc: "IPFS API Secret",
     default: ""
   }),
-  IPFS_GATEWAY: url({
-    desc: "IPFS Gateway URL",
-    default: "https://gateway.pinata.cloud"
-  })
+  IPFS_GATEWAY: str({ default: 'https://ipfs.io/ipfs/' }),
+  IPFS_DATA_DIR: str({ default: 'data/ipfs' }),
+  IPFS_PIN_METADATA: bool({ default: true }),
+  IPFS_TIMEOUT_MS: num({ default: 30000 }),
+  IPFS_MAX_RETRIES: num({ default: 3 }),
+
+  // Wallet Configuration
+  WALLET_PRIVATE_KEY: str(),
+  RPC_PROVIDER_URL: str(),
 });

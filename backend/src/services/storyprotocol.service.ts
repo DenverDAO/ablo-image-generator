@@ -1,167 +1,162 @@
-import { createStoryClient } from '@story-protocol/core-sdk';
-import { createWalletClient, http } from 'viem';
+import { StoryClient, StoryConfig, LicenseTerms } from '@story-protocol/core-sdk';
 import { privateKeyToAccount } from 'viem/accounts';
-import { baseSepolia } from 'viem/chains';
+import { http, toHex, zeroAddress } from 'viem';
 import { config } from '../config/env';
-import sharp from 'sharp';
-import crypto from 'crypto';
+import { IpfsService } from './ipfs.service';
+import { logger } from '../utils/logger';
 
 /**
  * Service for handling Story Protocol blockchain interactions
  */
 export class StoryProtocolService {
     private static instance: StoryProtocolService;
-    private storyClient: any; // TODO: Add proper type from SDK
-    private readonly pilTerms = {
-        transferable: true,
-        royaltyPolicy: config.royaltyPolicy,
-        defaultMintingFee: 0n,
-        expiration: 0n,
-        commercialUse: true,
-        commercialAttribution: true,
-        commercializerChecker: '0x0000000000000000000000000000000000000000',
-        commercializerCheckerData: '0x0000000000000000000000000000000000000000',
-        commercialRevShare: 50, // 50% revenue share
-        commercialRevCeiling: 0n,
-        derivativesAllowed: true,
-        derivativesAttribution: true,
-        derivativesApproval: false,
-        derivativesReciprocal: true,
-        derivativeRevCeiling: 0n,
-        currency: config.wipToken,
-        uri: '',
-    };
+    private client: StoryClient;
+    private ipfsService!: IpfsService; // Using definite assignment assertion
 
     private constructor() {
-        this.initializeClient();
-    }
+        const account = privateKeyToAccount(config.PRIVATE_KEY as `0x${string}`);
 
-    /**
-     * Initialize the Story Protocol client with wallet and network configuration
-     */
-    private initializeClient(): void {
-        try {
-            const account = privateKeyToAccount(config.privateKey as `0x${string}`);
-            const walletClient = createWalletClient({
-                account,
-                chain: baseSepolia,
-                transport: http(config.rpcUrl)
-            });
+        const storyConfig: StoryConfig = {
+            transport: http(config.RPC_URL),
+            account,
+            chainId: 'aeneid', // Story Protocol testnet
+        };
 
-            this.storyClient = createStoryClient({
-                chain: baseSepolia,
-                account,
-                walletClient,
-                rpcUrl: config.rpcUrl
-            });
-        } catch (error) {
-            throw new Error(`Failed to initialize Story Protocol client: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        }
+        this.client = StoryClient.newClient(storyConfig);
     }
 
     /**
      * Get singleton instance of the service
      */
-    public static getInstance(): StoryProtocolService {
+    public static async getInstance(): Promise<StoryProtocolService> {
         if (!StoryProtocolService.instance) {
             StoryProtocolService.instance = new StoryProtocolService();
+            StoryProtocolService.instance.ipfsService = await IpfsService.getInstance();
         }
         return StoryProtocolService.instance;
     }
 
     /**
-     * Hash an image buffer for unique identification
+     * Register an image as an IP Asset
+     * @param imageData Base64 encoded image data
+     * @param prompt The prompt used to generate the image
+     * @param creator The creator of the image
+     * @returns Transaction hash and asset ID
      */
-    private async hashImage(imageBuffer: Buffer): Promise<string> {
-        return crypto.createHash('sha256').update(imageBuffer).digest('hex');
-    }
-
-    /**
-     * Create metadata for an IP Asset
-     */
-    private async createMetadata(
-        imageBuffer: Buffer,
-        prompt: string,
-        model: string,
-        format: string,
-        creator: string,
-        imageUrl: string
-    ) {
-        const imageInfo = await sharp(imageBuffer).metadata();
-        const imageHash = await this.hashImage(imageBuffer);
-
-        return {
-            title: `AI Generated Image: ${prompt.substring(0, 30)}...`,
-            description: prompt,
-            prompt,
-            model,
-            creator,
-            creationDate: new Date().toISOString(),
-            width: imageInfo.width,
-            height: imageInfo.height,
-            format,
-            imageHash,
-            imageUrl,
-            license: 'Creative Commons with Attribution',
-            attributionText: `AI image created by ${creator} using ${model}`
-        };
-    }
-
-    /**
-     * Register an image as an IP Asset on Story Protocol
-     */
-    public async registerImage(
-        imageBuffer: Buffer,
-        prompt: string,
-        model: string,
-        format: string,
-        creator: string
-    ) {
+    public async registerImage(imageData: Buffer, prompt: string, creator: string): Promise<{ ipId: string; tokenId: string }> {
         try {
-            // TODO: Implement IPFS upload
-            const mockImageUrl = 'https://placeholder-for-ipfs-url.com';
+            // Upload image and metadata to IPFS
+            const imageIpfsHash = await this.ipfsService.uploadData(imageData);
 
-            // Create and prepare metadata
-            const metadata = await this.createMetadata(
-                imageBuffer,
-                prompt,
-                model,
-                format,
-                creator,
-                mockImageUrl
-            );
+            const ipMetadata = {
+                title: prompt,
+                description: `AI-generated image from prompt: ${prompt}`,
+                image: `${config.IPFS_GATEWAY}${imageIpfsHash}`,
+                imageHash: toHex(imageIpfsHash, { size: 32 }),
+                mediaUrl: `${config.IPFS_GATEWAY}${imageIpfsHash}`,
+                mediaHash: toHex(imageIpfsHash, { size: 32 }),
+                mediaType: 'image/png',
+                creators: [
+                    {
+                        name: creator,
+                        address: creator,
+                        description: 'AI Image Creator',
+                        contributionPercent: 100
+                    }
+                ]
+            };
 
-            // Hash metadata for blockchain storage
-            const metadataHash = crypto.createHash('sha256')
-                .update(JSON.stringify(metadata))
-                .digest('hex') as `0x${string}`;
+            const nftMetadata = {
+                name: prompt,
+                description: `AI-generated image from prompt: ${prompt}`,
+                image: `${config.IPFS_GATEWAY}${imageIpfsHash}`
+            };
 
-            // TODO: Upload metadata to IPFS
-            const mockMetadataUrl = 'https://placeholder-for-ipfs-metadata-url.com';
+            const ipMetadataIpfsHash = await this.ipfsService.uploadMetadata(ipMetadata);
+            const nftMetadataIpfsHash = await this.ipfsService.uploadMetadata(nftMetadata);
 
-            // Register as IP Asset
-            const response = await this.storyClient.ipAsset.mintAndRegisterIpAssetWithPilTerms({
-                spgNftContract: config.spgNftContract,
-                licenseTermsData: [{ terms: this.pilTerms }],
+            const terms: LicenseTerms = {
+                transferable: true,
+                royaltyPolicy: config.ROYALTY_POLICY as `0x${string}`,
+                defaultMintingFee: 0n,
+                expiration: 0n,
+                commercialUse: true,
+                commercialAttribution: true,
+                commercializerChecker: zeroAddress,
+                commercializerCheckerData: zeroAddress,
+                commercialRevShare: 10_000_000, // 10% revenue share (100_000_000 = 100%)
+                commercialRevCeiling: 0n,
+                derivativesAllowed: true,
+                derivativesAttribution: true,
+                derivativesApproval: false,
+                derivativesReciprocal: true,
+                derivativeRevCeiling: 0n,
+                currency: config.WIP_TOKEN as `0x${string}`,
+                uri: ''
+            };
+
+            // Register the image as an IP asset
+            const response = await this.client.ipAsset.mintAndRegisterIpAssetWithPilTerms({
+                spgNftContract: config.SPG_NFT_CONTRACT as `0x${string}`,
                 ipMetadata: {
-                    ipMetadataURI: mockMetadataUrl,
-                    ipMetadataHash: `0x${metadataHash}`,
-                    nftMetadataHash: `0x${metadataHash}`,
-                    nftMetadataURI: mockMetadataUrl,
+                    ipMetadataURI: `${config.IPFS_GATEWAY}${ipMetadataIpfsHash}`,
+                    ipMetadataHash: toHex(ipMetadataIpfsHash, { size: 32 }),
+                    nftMetadataURI: `${config.IPFS_GATEWAY}${nftMetadataIpfsHash}`,
+                    nftMetadataHash: toHex(nftMetadataIpfsHash, { size: 32 })
                 },
-                txOptions: { waitForTransaction: true },
+                licenseTermsData: [{ terms }],
+                allowDuplicates: true,
+                txOptions: { waitForTransaction: true }
+            });
+
+            logger.info('IP Asset registered successfully', {
+                txHash: response.txHash,
+                ipId: response.ipId,
+                tokenId: response.tokenId
             });
 
             return {
-                success: true,
-                ipAssetId: response.ipId,
-                tokenId: response.tokenId,
-                licenseTermsId: response.licenseTermsIds?.[0],
-                transactionHash: response.txHash,
-                metadata
+                ipId: response.ipId as string,
+                tokenId: response.tokenId?.toString() as string
             };
         } catch (error) {
-            throw new Error(`Failed to register image as IP Asset: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            logger.error('Failed to register IP asset', { error });
+            throw error;
         }
     }
+
+    /**
+     * TODO: Asset retrieval functionality is currently blocked
+     * 
+     * The Story Protocol SDK does not clearly document methods for retrieving IP assets.
+     * Based on our investigation of the SDK documentation and examples:
+     * 1. The correct method for asset retrieval is not documented
+     * 2. Multiple attempted approaches (get, getAsset, readIpAsset, etc.) resulted in type errors
+     * 3. The SDK may not currently expose this functionality
+     * 
+     * Next steps:
+     * 1. Implement local caching of asset details after successful registration
+     * 2. Monitor SDK updates for proper asset retrieval methods
+     * 3. Consider reaching out to Story Protocol team for guidance
+     * 
+     * For reference see:
+     * - https://docs.story.foundation/docs/sdk-overview
+     * - https://github.com/storyprotocol/typescript-tutorial
+     */
+    /*
+    async getAssetDetails(assetId: string) {
+        try {
+            const contract = await this.client.ipAsset.getContract();
+            const asset = await contract.read.getAsset([assetId]);
+            if (!asset.ipMetadataURI) {
+                throw new Error('IP metadata URI not found');
+            }
+            const metadata = await this.ipfsService.getMetadata(asset.ipMetadataURI);
+            return { ...asset, metadata };
+        } catch (error) {
+            logger.error('Error getting IP asset details:', error);
+            throw error;
+        }
+    }
+    */
 } 

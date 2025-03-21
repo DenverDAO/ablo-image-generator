@@ -1,0 +1,64 @@
+# Ablo Image Generator Project Rules
+
+## Project Structure
+- Backend is in `/backend` directory with TypeScript and Express
+- Frontend is in `/frontend` directory (technology stack assumptions: React)
+- Docker deployment is available through `docker-run.sh`
+
+## Code Patterns
+- Use TypeScript for all new code
+- Follow service-based architecture in backend
+- All Story Protocol related code should be in a dedicated service
+- Use try/catch for error handling, especially with blockchain interactions
+- Use async/await for asynchronous operations
+- Return structured responses with consistent format
+
+## Naming Conventions
+- Files: camelCase.ts (service files, utilities) or kebab-case.ts (routes)
+- Classes/Types: PascalCase
+- Functions/Methods: camelCase
+- Constants: UPPER_SNAKE_CASE
+- Environment variables: UPPER_SNAKE_CASE
+
+## Image Generation Pattern
+- Use HfService for all Hugging Face API interactions
+- Handle model errors gracefully
+- Validate all input parameters
+- Support both JPEG and PNG formats
+
+## Story Protocol Integration Patterns
+- New StoryProtocolService should be implemented
+- Use environment variables for all blockchain-related configuration
+- Handle blockchain transaction errors gracefully with detailed error messages
+- Follow the metadata structure defined in documentation
+- Use the mintAndRegisterIpAssetWithPilTerms method for registration
+- Support customizable license terms with sensible defaults
+
+## Import Order
+1. External libraries
+2. Internal modules
+3. Types
+4. Constants/config
+
+## Error Handling
+- Use custom error types for different failure scenarios
+- Include error codes and messages in responses
+- Log blockchain errors with transaction hashes when available
+- Handle both API errors and blockchain transaction failures
+
+## Environment Variables
+- All required environment variables should be validated at startup
+- Use .env.example for documentation
+- Separate Story Protocol variables in their own section
+
+## Testing Strategy
+- Unit tests for all new services
+- Integration tests for API endpoints
+- Mock blockchain interactions for testing
+- Separate test environment from development
+
+## Code Comments
+- Include JSDoc comments for all public functions
+- Explain complex blockchain interactions
+- Document all environment variables
+- Add TODOs for future improvements 

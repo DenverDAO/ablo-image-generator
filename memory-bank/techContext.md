@@ -126,3 +126,119 @@ The key dependencies include:
 3. **Multiple Networks**: Supporting multiple blockchain networks
 4. **Account Abstraction**: Implementing more user-friendly wallet interactions
 5. **Advanced IP Features**: Adding licensing, royalties, and derivative work tracking
+
+## Story Protocol Integration
+
+### Working Features
+
+- IP Asset Registration using `mintAndRegisterIpAssetWithPilTerms`
+- IPFS metadata storage and retrieval
+- License terms configuration
+- Environment variable validation
+
+### Known Limitations
+
+- Asset retrieval methods not clearly documented in SDK
+- Type definitions may be incomplete or outdated
+- Need to implement local caching for asset details
+
+## Development Setup
+
+- Using Story Protocol's Aeneid testnet
+- IPFS gateway configured for metadata storage
+- Environment variables required for blockchain interaction
+
+## Dependencies
+
+- @story-protocol/core-sdk: Latest version
+- viem: Required for blockchain interactions
+- envalid: Environment validation
+- winston: Logging
+
+## Technical Constraints
+
+- Story Protocol SDK limitations in asset retrieval
+- Need to maintain local cache of registered assets
+- Blockchain transaction latency considerations
+- IPFS gateway reliability and performance
+
+## Security Considerations
+
+- Private key management
+- API key protection
+- Rate limiting for blockchain interactions
+- Error handling for failed transactions
+
+## IPFS Integration
+
+### Architecture
+
+- Using Helia IPFS client with filesystem-based blockstore
+- Persistent data storage in configurable directory
+- Singleton service pattern with async initialization
+- Configurable gateway fallback for content resolution
+
+### Features
+
+- File and metadata storage with CID generation
+- Content pinning for persistence
+- Automatic directory creation and management
+- Retry mechanism with configurable timeout
+- Gateway fallback for content verification
+- Metadata parsing and validation
+
+### Configuration
+
+- Configurable via environment variables:
+  - IPFS_GATEWAY: Gateway URL for content resolution
+  - IPFS_DATA_DIR: Local storage location
+  - IPFS_PIN_METADATA: Auto-pinning control
+  - IPFS_TIMEOUT_MS: Operation timeout
+  - IPFS_MAX_RETRIES: Retry attempts
+  - IPFS_API_KEY/SECRET: Optional external service integration
+
+### Error Handling
+
+- Graceful initialization failure recovery
+- Timeout handling for network operations
+- Retry logic for transient failures
+- Detailed error logging
+- Gateway fallback for content verification
+
+## Story Protocol Integration
+
+- IP Asset Registration using `mintAndRegisterIpAssetWithPilTerms`
+- IPFS metadata storage and retrieval
+- License terms configuration
+- Environment variable validation
+
+## Development Setup
+
+- Using Story Protocol's Aeneid testnet
+- IPFS gateway configured for metadata storage
+- Environment variables required for blockchain interaction
+
+## Dependencies
+
+- @story-protocol/core-sdk: Latest version
+- helia: IPFS client
+- @helia/unixfs: IPFS filesystem operations
+- blockstore-fs: Persistent storage
+- viem: Blockchain interactions
+- envalid: Environment validation
+- winston: Logging
+
+## Technical Constraints
+
+- Story Protocol SDK limitations in asset retrieval
+- Need to maintain local cache of registered assets
+- Blockchain transaction latency considerations
+- IPFS gateway reliability and performance
+
+## Security Considerations
+
+- Private key management
+- API key protection
+- Rate limiting for blockchain interactions
+- Error handling for failed transactions
+- Secure metadata storage and retrieval
