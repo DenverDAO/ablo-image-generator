@@ -1,44 +1,54 @@
 import dotenv from "dotenv";
+import { cleanEnv, str, port, url } from "envalid";
 
 dotenv.config();
 
-interface Config {
-  port: number;
-  corsOrigin: string;
-  huggingfaceToken: string;
-  huggingfaceModel: string;
-}
+export const config = cleanEnv(process.env, {
+  // Server Configuration
+  PORT: port({ default: 3000 }),
+  CORS_ORIGIN: str({ default: "http://localhost:5173" }),
 
-const validateConfig = (): Config => {
-  const port = parseInt(process.env.PORT || "7860");
-  if (!(port >= 0 || port <= 65535)) {
-    throw new Error("Port must be between 0 and 65535");
-  }
+  // Hugging Face Configuration
+  HUGGINGFACE_ACCESS_TOKEN: str(),
+  HUGGINGFACE_MODEL: str({ default: "stabilityai/stable-diffusion-2" }),
 
-  if (
-    !process.env.HUGGINGFACE_ACCESS_TOKEN ||
-    process.env.HUGGINGFACE_ACCESS_TOKEN ===
-      "your_huggingface_access_token_here"
-  ) {
-    console.warn(
-      "HUGGINGFACE_ACCESS_TOKEN is required to access one's own services, you can get one at https://huggingface.co/settings/tokens"
-    );
-  }
+  // Story Protocol Configuration
+  PRIVATE_KEY: str({
+    desc: "Private key for the wallet (for testing only)",
+    example: "0x1234..."
+  }),
+  RPC_URL: url({
+    desc: "Base Sepolia RPC URL",
+    default: "https://sepolia.base.org"
+  }),
+  CHAIN_ID: str({
+    desc: "Base Sepolia Chain ID",
+    default: "84532"
+  }),
+  SPG_NFT_CONTRACT: str({
+    desc: "Story Protocol SPG NFT Contract",
+    example: "0x1234..."
+  }),
+  ROYALTY_POLICY: str({
+    desc: "Royalty Policy Contract Address",
+    example: "0x1234..."
+  }),
+  WIP_TOKEN: str({
+    desc: "WIP Token Address",
+    example: "0x1234..."
+  }),
 
-  if (!process.env.CORS_ORIGIN) {
-    console.warn(
-      "If the frontend has a different host, CORS_ORIGIN is required for it to function properly"
-    );
-  }
-
-  return {
-    port,
-    corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
-    // TODO: Environment variables don't seem to be getting passed to the docker container. This is a temporary workaround.
-    huggingfaceToken: process.env.HUGGINGFACE_ACCESS_TOKEN || "",
-    huggingfaceModel:
-      process.env.HUGGINGFACE_MODEL || "black-forest-labs/FLUX.1-schnell",
-  };
-};
-
-export const config = validateConfig();
+  // IPFS Configuration (TODO: Implement)
+  IPFS_API_KEY: str({
+    desc: "IPFS API Key (e.g., Pinata)",
+    default: ""
+  }),
+  IPFS_API_SECRET: str({
+    desc: "IPFS API Secret",
+    default: ""
+  }),
+  IPFS_GATEWAY: url({
+    desc: "IPFS Gateway URL",
+    default: "https://gateway.pinata.cloud"
+  })
+});
