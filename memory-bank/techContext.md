@@ -32,6 +32,49 @@
 
 ## Frontend Architecture
 
+### File Structure
+
+The frontend follows a strict TypeScript-first approach with a clean, organized structure:
+
+```
+frontend/
+├── src/
+│   ├── components/     - Reusable UI components
+│   ├── lib/           - Utilities, hooks, and services
+│   ├── assets/        - Static assets
+│   ├── App.tsx        - Main application component
+│   ├── main.tsx       - Application entry point
+│   └── index.css      - Global styles and Tailwind imports
+├── vite.config.ts     - Build and development configuration
+└── tsconfig.json      - TypeScript configuration
+```
+
+### Technology Stack
+
+- TypeScript for type safety and better developer experience
+- React 18+ for UI components
+- Vite for fast development and optimized builds
+- Tailwind CSS for utility-first styling
+- shadcn/ui for consistent, accessible components
+- Web3-Onboard for wallet connections
+- Zustand for state management
+
+### Development Standards
+
+- All React components use `.tsx` extension
+- Path aliases configured for clean imports (`@/` prefix)
+- ESM modules throughout the codebase
+- Strict TypeScript checking enabled
+- Tailwind for all styling (no CSS modules or styled-components)
+
+### Build Configuration
+
+- Vite configured with TypeScript support
+- Path aliasing for cleaner imports
+- React Fast Refresh enabled
+- Environment variable typing
+- Production optimizations enabled
+
 ### Core Technologies
 
 - React with TypeScript for type safety

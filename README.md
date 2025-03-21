@@ -164,6 +164,44 @@ pnpm test
 
 ![App Screenshot](./screenshot.png)
 
+### Overview
+
+React application built with TypeScript, providing a modern UI for image generation and NFT minting. Features include:
+
+- Text-to-image generation with style selection
+- Web3 wallet integration
+- NFT minting with Story Protocol
+- Real-time transaction tracking
+- IPFS content viewing
+
+### Structure
+
+```
+frontend/
+├── src/
+│   ├── components/     - Reusable UI components
+│   │   ├── GeneratedImage.tsx    - Image display and minting
+│   │   ├── ImageGenerationForm.tsx - Prompt input and generation
+│   │   └── MintDialog.tsx        - NFT minting status
+│   ├── lib/           - Utilities and services
+│   │   ├── hooks/     - Custom React hooks
+│   │   ├── services/  - API and blockchain services
+│   │   └── store/     - State management
+│   ├── App.tsx        - Main application component
+│   └── main.tsx       - Application entry point
+└── vite.config.ts     - Build configuration
+```
+
+### Technology Stack
+
+- TypeScript 5.x
+- React 18+
+- Vite
+- Tailwind CSS
+- shadcn/ui
+- Web3-Onboard
+- Zustand
+
 ### Starting the frontend
 
 After [starting the server](#starting-the-server):
@@ -173,6 +211,14 @@ cd frontend
 pnpm install
 pnpm dev
 ```
+
+### Development Standards
+
+- Strict TypeScript usage throughout
+- Component-first architecture
+- Tailwind for styling
+- Modular state management
+- Clean import paths via aliases
 
 ## Potential Future Features
 
