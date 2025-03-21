@@ -1,38 +1,28 @@
-import express from "express";
-import cors from "cors";
-import path from "path";
-
-import { config } from "./config/env";
-import { router } from "./routes/api";
-import { errorHandler } from "./middlewares/error.middleware";
+import express from 'express';
+import cors from 'cors';
+import { config as env } from './config/env';
+import router from './routes/api';
+import { errorHandler } from './middlewares/error.middleware';
 
 const app = express();
 
-// Enable CORS for all requests
-app.use(
-  cors({
-    origin: config.corsOrigin,
-  })
-);
+// Middleware
+app.use(cors({
+  origin: env.CORS_ORIGIN,
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// Parse incoming requests with JSON payloads
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Handle API routing; send /api requests to API
-app.use("/api", router);
+// Routes
+app.use('/api', router);
 
-// Serve static files from the React build
-app.use(express.static(path.join(__dirname, "../../frontend/dist")));
-
-// Handle React routing; send all other requests to React app
-app.get("*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/dist", "index.html"));
-});
-
-// Error handler middleware
+// Error handling
 app.use(errorHandler);
 
-app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`);
+// Start server
+app.listen(env.PORT, () => {
+  console.log(`Server running on port ${env.PORT}`);
 });

@@ -1,4 +1,4 @@
-import { env } from '../config/env';
+import { config } from '../config/env';
 import { logger } from '../utils/logger';
 
 interface PinataResponse {
@@ -19,9 +19,9 @@ export class PinataService {
     private readonly useDedicatedGateway: boolean;
 
     private constructor() {
-        this.jwt = env.PINATA_JWT;
-        this.gatewayUrl = env.PINATA_GATEWAY_URL;
-        this.useDedicatedGateway = env.PINATA_DEDICATED_GATEWAY;
+        this.jwt = config.PINATA_JWT;
+        this.gatewayUrl = config.PINATA_GATEWAY_URL;
+        this.useDedicatedGateway = config.PINATA_DEDICATED_GATEWAY;
     }
 
     public static getInstance(): PinataService {

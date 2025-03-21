@@ -1,4 +1,39 @@
-# Active Context: Story Protocol Integration
+# Active Context
+
+## Current Focus
+
+- Fixed TypeScript errors in Story Protocol integration
+- Improved error handling in IPFS and Pinata services
+- Enhanced type safety across the backend services
+
+## Recent Changes
+
+- Updated Story Protocol service to use correct SDK methods and types
+- Fixed IPFS service error handling and content type management
+- Corrected Pinata service configuration import
+- Improved image controller to properly handle async service instances
+- Enhanced error handling with proper TypeScript types
+
+## Next Steps
+
+- Test the complete image generation and NFT minting flow
+- Add comprehensive error handling for missing API keys
+- Implement frontend error handling for failed API calls
+- Add retry mechanisms for blockchain transactions
+
+## Active Decisions
+
+- Using Story Protocol's `mintAndRegisterIp` method for NFT minting
+- Implementing proper TypeScript error handling across all services
+- Using both local IPFS node and Pinata for redundancy
+- Following singleton pattern for service instances
+
+## Current Considerations
+
+- Need to ensure proper error handling for all external service calls
+- Consider implementing rate limiting for API calls
+- May need to add transaction monitoring for NFT minting
+- Consider adding more detailed logging for debugging
 
 ## Current Work Focus
 
@@ -8,17 +43,6 @@
 - Implemented asset retrieval using Story Protocol's HTTP API
 - Added Pinata integration for reliable content pinning
 
-## Recent Changes
-
-- Implemented persistent IPFS storage with Helia client
-- Added Pinata service for reliable pinning
-- Added comprehensive IPFS configuration options
-- Implemented retry mechanism and error handling for IPFS operations
-- Added automatic data directory management
-- Added Story Protocol service with successful image registration functionality
-- Implemented asset retrieval using HTTP API
-- Configured environment variables for all integrations
-
 ## Active Decisions
 
 - Using filesystem-based blockstore for IPFS persistence
@@ -27,23 +51,6 @@
 - Configurable pinning behavior for metadata
 - Using Story Protocol HTTP API for asset retrieval
 - Current SDK version may not expose direct methods for asset retrieval
-
-## Next Steps
-
-1. Implement local caching system for IP asset details
-2. Add comprehensive testing for IPFS operations
-3. Monitor Story Protocol SDK updates for improved asset retrieval methods
-4. Add monitoring and metrics for IPFS operations
-5. Implement batch operations for content pinning
-6. Add content verification mechanisms
-
-## Current Considerations
-
-1. **IPFS Integration**: Need to implement proper IPFS storage
-2. **Gas Fees**: Users will need Base Sepolia ETH for testing
-3. **Error Handling**: Comprehensive error handling for blockchain transactions
-4. **User Experience**: Making blockchain interactions user-friendly
-5. **Testing**: Need comprehensive tests for blockchain interactions
 
 ## Known Issues
 

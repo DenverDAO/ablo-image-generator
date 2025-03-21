@@ -1,7 +1,20 @@
 import dotenv from "dotenv";
-import { cleanEnv, str, port, url, num, bool } from "envalid";
+import { cleanEnv, str, port, url, num, bool, makeValidator } from "envalid";
+import { isAddress } from "viem";
 
 dotenv.config();
+
+const ethereumAddress = makeValidator<`0x${string}`>((input) => {
+  if (!input) throw new Error('Missing required environment variable');
+  if (!isAddress(input)) throw new Error(`Invalid Ethereum address: ${input}`);
+  return input as `0x${string}`;
+});
+
+const ethereumKey = makeValidator<`0x${string}`>((input) => {
+  if (!input) throw new Error('Missing required environment variable');
+  const key = input.startsWith('0x') ? input : `0x${input}`;
+  return key as `0x${string}`;
+});
 
 export const config = cleanEnv(process.env, {
   // Server Configuration
@@ -14,7 +27,7 @@ export const config = cleanEnv(process.env, {
   HUGGINGFACE_MODEL: str({ default: "stabilityai/stable-diffusion-2" }),
 
   // Story Protocol Configuration
-  PRIVATE_KEY: str({
+  PRIVATE_KEY: ethereumKey({
     desc: "Private key for the wallet (for testing only)",
     example: "0x1234..."
   }),
@@ -26,19 +39,19 @@ export const config = cleanEnv(process.env, {
     desc: "Base Sepolia Chain ID",
     default: "84532"
   }),
-  SPG_NFT_CONTRACT: str({
+  SPG_NFT_CONTRACT: ethereumAddress({
     desc: "Story Protocol SPG NFT Contract",
     example: "0x1234..."
   }),
-  ROYALTY_POLICY: str({
+  ROYALTY_POLICY: ethereumAddress({
     desc: "Royalty Policy Contract Address",
     example: "0x1234..."
   }),
-  WIP_TOKEN: str({
+  WIP_TOKEN: ethereumAddress({
     desc: "WIP Token Address",
     example: "0x1234..."
   }),
-  NFT_CONTRACT_ADDRESS: str(),
+  NFT_CONTRACT_ADDRESS: ethereumAddress(),
 
   // IPFS Configuration
   IPFS_API_KEY: str({
@@ -56,7 +69,7 @@ export const config = cleanEnv(process.env, {
   IPFS_MAX_RETRIES: num({ default: 3 }),
 
   // Wallet Configuration
-  WALLET_PRIVATE_KEY: str(),
+  WALLET_PRIVATE_KEY: ethereumKey(),
   RPC_PROVIDER_URL: str(),
 
   // Pinata Configuration

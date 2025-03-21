@@ -1,73 +1,101 @@
-import { Response } from "express";
-import { HfService } from "../services/huggingface.service";
-import { StoryProtocolService } from "../services/storyprotocol.service";
-import { GenerateImageRequest, RegisterImageRequest } from "../types/requests";
+import { Request, Response } from 'express';
+import { HfService } from '../services/huggingface.service';
+import { StoryProtocolService } from '../services/storyprotocol.service';
+import { logger } from '../utils/logger';
 
-export const generateImage = async (
-  req: GenerateImageRequest,
-  res: Response
-) => {
+interface GenerateImageRequest extends Request {
+  body: {
+    prompt: string;
+    style?: string;
+    model?: string;
+    format?: string;
+    negativePrompt?: string;
+    width?: number;
+    height?: number;
+  };
+}
+
+interface RegisterImageRequest extends Request {
+  body: {
+    imageData: string;
+    prompt: string;
+    style?: string;
+    model?: string;
+    format?: string;
+    creator?: string;
+  };
+}
+
+/**
+ * Generate an image using Hugging Face's text-to-image model
+ */
+export const generateImage = async (req: GenerateImageRequest, res: Response) => {
   try {
     const {
-      model,
       prompt,
+      style,
+      model,
+      format = "jpeg",
       negativePrompt,
       width = 512,
       height = 512,
-      format = "jpeg",
     } = req.body;
 
     const imageBuffer = await HfService.generateImage({
-      model,
       prompt,
+      model,
+      format,
       negativePrompt,
       width,
       height,
-      format,
     });
 
     res.json({
-      image: imageBuffer.toString("base64"),
-      mimeType: format === "png" ? "image/png" : "image/jpeg",
+      image: imageBuffer.toString('base64'),
+      mimeType: format === 'png' ? 'image/png' : 'image/jpeg',
     });
   } catch (error) {
+    logger.error('Error generating image:', error);
     res.status(500).json({
-      error: "Image generation failed",
-      details: error instanceof Error ? error.message : "Unknown error",
+      error: 'Failed to generate image',
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };
 
-export const registerImage = async (
-  req: RegisterImageRequest,
-  res: Response
-) => {
+/**
+ * Register an image as an IP Asset on Story Protocol
+ */
+export const registerImage = async (req: RegisterImageRequest, res: Response) => {
   try {
     const {
       imageData,
       prompt,
+      style,
       model,
       format = "jpeg",
       creator,
     } = req.body;
 
-    // Convert base64 to buffer
-    const imageBuffer = Buffer.from(imageData, 'base64');
+    // Get Story Protocol service instance
+    const storyProtocolService = await StoryProtocolService.getInstance();
 
     // Register image as IP Asset
-    const result = await StoryProtocolService.getInstance().registerImage(
-      imageBuffer,
+    const result = await storyProtocolService.registerImage(
+      imageData,
       prompt,
-      model,
-      format,
-      creator
+      style
     );
 
-    res.json(result);
+    res.json({
+      success: true,
+      transactionHash: result,
+    });
   } catch (error) {
+    logger.error('Error registering image:', error);
     res.status(500).json({
-      error: "IP Asset registration failed",
-      details: error instanceof Error ? error.message : "Unknown error",
+      error: 'Failed to register image',
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };

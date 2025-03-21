@@ -56,6 +56,21 @@ export class IpfsService {
         }
     }
 
+    private async handleError(operation: string, e: unknown): Promise<never> {
+        if (e instanceof Error) {
+            logger.error(`IPFS ${operation} failed:`, {
+                message: e.message,
+                stack: e.stack
+            });
+            throw new Error(`IPFS ${operation} failed: ${e.message}`);
+        }
+
+        // Handle non-Error objects
+        const errorMessage = typeof e === 'string' ? e : 'Unknown error occurred';
+        logger.error(`IPFS ${operation} failed:`, { error: e });
+        throw new Error(`IPFS ${operation} failed: ${errorMessage}`);
+    }
+
     /**
      * Stores a file in IPFS and pins it to Pinata
      * @param content File content as Buffer
@@ -122,8 +137,8 @@ export class IpfsService {
      * @returns Content as string
      */
     async getContent(cid: string): Promise<string> {
-        let content: string | undefined;
-        let error: Error | undefined;
+        let error: Error | null = null;
+        let content: string | null = null;
 
         // Try local IPFS node first
         try {
@@ -134,19 +149,23 @@ export class IpfsService {
             content = Buffer.concat(chunks).toString();
             logger.info(`Content retrieved from local IPFS: ${cid}`);
             return content;
-        } catch (e) {
-            error = e as Error;
-            logger.warn(`Failed to retrieve from local IPFS: ${e.message}`);
+        } catch (e: unknown) {
+            error = e instanceof Error ? e : new Error('Unknown error occurred');
+            logger.warn(`Failed to retrieve from local IPFS: ${error.message}`);
         }
 
         // Fallback to Pinata gateway
         try {
             content = await this.pinataService.getContent(cid);
+            if (!content) {
+                throw new Error('No content returned from Pinata gateway');
+            }
             logger.info(`Content retrieved from Pinata gateway: ${cid}`);
             return content;
-        } catch (e) {
-            logger.error('Failed to retrieve content from both local and Pinata:', e);
-            throw error || e;
+        } catch (e: unknown) {
+            const pinataError = e instanceof Error ? e : new Error('Unknown error occurred');
+            logger.error(`Failed to retrieve from Pinata gateway: ${pinataError.message}`);
+            throw error || pinataError;
         }
     }
 

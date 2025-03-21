@@ -440,3 +440,66 @@ The key dependencies include:
 - Content verification
 - Automated pinning policies
 - Advanced search capabilities
+
+## Error Handling Patterns
+
+### TypeScript Error Handling
+
+- Using proper type checking for unknown errors
+- Implementing type-safe error handling across all services
+- Converting unknown errors to Error instances with meaningful messages
+- Maintaining type safety in async/await operations
+
+### Service Error Handling
+
+- IPFS Service:
+
+  - Primary/fallback pattern with local node and Pinata
+  - Proper error propagation with type safety
+  - Detailed error logging with context
+  - Content validation before returning
+
+- Story Protocol Service:
+
+  - Transaction error handling
+  - API key validation
+  - Type-safe blockchain interactions
+  - Proper error propagation
+
+- Pinata Service:
+  - Gateway fallback mechanism
+  - API error handling
+  - Content validation
+  - Type-safe responses
+
+### Controller Error Handling
+
+- Proper async/await error handling
+- Type-safe request/response handling
+- Consistent error response format
+- Detailed error logging
+
+## Service Architecture
+
+### Singleton Pattern
+
+All services follow the singleton pattern with proper TypeScript implementation:
+
+- Static instance management
+- Async initialization where needed
+- Type-safe getInstance methods
+- Proper error handling in constructors
+
+### IPFS Integration
+
+- Local Helia node for primary storage
+- Pinata integration for reliable pinning
+- Content verification
+- Proper error handling and retries
+
+### Story Protocol Integration
+
+- Using latest SDK methods
+- Proper type definitions
+- Transaction monitoring
+- Asset registration and retrieval
