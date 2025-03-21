@@ -2,26 +2,30 @@
 
 ## Current Work Focus
 
-- Implementing robust IPFS integration for decentralized storage
+- Implementing robust IPFS integration with Pinata for reliable storage
 - Story Protocol integration for registering and managing AI-generated images as IP assets
 - Successfully implemented image registration using `mintAndRegisterIpAssetWithPilTerms`
-- Identified gap in SDK documentation regarding asset retrieval methods
+- Implemented asset retrieval using Story Protocol's HTTP API
+- Added Pinata integration for reliable content pinning
 
 ## Recent Changes
 
 - Implemented persistent IPFS storage with Helia client
+- Added Pinata service for reliable pinning
 - Added comprehensive IPFS configuration options
 - Implemented retry mechanism and error handling for IPFS operations
 - Added automatic data directory management
 - Added Story Protocol service with successful image registration functionality
+- Implemented asset retrieval using HTTP API
 - Configured environment variables for all integrations
 
 ## Active Decisions
 
 - Using filesystem-based blockstore for IPFS persistence
+- Using Pinata for reliable content pinning
 - Implementing gateway fallback for content verification
 - Configurable pinning behavior for metadata
-- Need to determine correct method for retrieving IP assets
+- Using Story Protocol HTTP API for asset retrieval
 - Current SDK version may not expose direct methods for asset retrieval
 
 ## Next Steps
@@ -29,8 +33,9 @@
 1. Implement local caching system for IP asset details
 2. Add comprehensive testing for IPFS operations
 3. Monitor Story Protocol SDK updates for improved asset retrieval methods
-4. Consider implementing Pinata or similar service integration for additional reliability
-5. Add monitoring and metrics for IPFS operations
+4. Add monitoring and metrics for IPFS operations
+5. Implement batch operations for content pinning
+6. Add content verification mechanisms
 
 ## Current Considerations
 
@@ -43,6 +48,6 @@
 ## Known Issues
 
 - Story Protocol SDK does not clearly document methods for retrieving IP assets
-- Current implementation of `getAssetDetails` needs revision once correct method is identified
 - IPFS operations may experience timeouts or network issues
 - Need to handle IPFS node connectivity issues gracefully
+- Need to implement proper error handling for Pinata API rate limits

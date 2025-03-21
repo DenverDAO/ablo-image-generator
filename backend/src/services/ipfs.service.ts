@@ -6,16 +6,23 @@ import { mkdir } from 'fs/promises';
 import { logger } from '../utils/logger';
 import { config } from '../config/env';
 import axios from 'axios';
+import { PinataService } from './pinata.service';
+import { createLibp2p } from 'libp2p';
 
 export class IpfsService {
     private static instance: IpfsService;
     private helia: any;
     private fs: any;
-    private blockstore: FsBlockstore;
+    private pinataService: PinataService;
+    private readonly dataDir: string;
+    private readonly maxRetries: number;
+    private readonly timeoutMs: number;
 
     private constructor() {
-        // Create a persistent blockstore in the configured data directory
-        this.blockstore = new FsBlockstore(join(process.cwd(), config.IPFS_DATA_DIR));
+        this.dataDir = config.IPFS_DATA_DIR;
+        this.maxRetries = config.IPFS_MAX_RETRIES;
+        this.timeoutMs = config.IPFS_TIMEOUT_MS;
+        this.pinataService = PinataService.getInstance();
     }
 
     public static async getInstance(): Promise<IpfsService> {
@@ -28,19 +35,20 @@ export class IpfsService {
 
     private async initialize() {
         try {
-            // Ensure the data directory exists
-            const dataDir = join(process.cwd(), config.IPFS_DATA_DIR);
-            await mkdir(dataDir, { recursive: true });
-            logger.info(`Ensured IPFS data directory exists at: ${dataDir}`);
+            // Ensure data directory exists
+            await mkdir(this.dataDir, { recursive: true });
+            logger.info(`IPFS data directory ensured at: ${this.dataDir}`);
 
-            // Create a Helia node with persistent storage
+            // Initialize Helia with filesystem blockstore
+            const blockstore = new FsBlockstore(join(this.dataDir, 'blocks'));
+            const libp2p = await createLibp2p();
+
             this.helia = await createHelia({
-                blockstore: this.blockstore
+                libp2p,
+                blockstore
             });
 
-            // Create a filesystem to store files
             this.fs = unixfs(this.helia);
-
             logger.info('IPFS service initialized successfully');
         } catch (error) {
             logger.error('Failed to initialize IPFS service:', error);
@@ -49,159 +57,120 @@ export class IpfsService {
     }
 
     /**
-     * Check if a CID exists and is accessible
-     * @param cid Content Identifier to check
-     * @returns boolean indicating if the CID is accessible
+     * Stores a file in IPFS and pins it to Pinata
+     * @param content File content as Buffer
+     * @param options Optional metadata for Pinata
+     * @returns CID of the stored file
      */
-    public async exists(cid: string): Promise<boolean> {
+    async storeFile(content: Buffer, options?: { name?: string; metadata?: Record<string, string> }): Promise<string> {
         try {
-            // Try to get the data stats without downloading the full content
-            await this.fs.stat(cid);
-            return true;
-        } catch {
-            // If local check fails, try the gateway
-            try {
-                const response = await axios.head(`${config.IPFS_GATEWAY}${cid}`);
-                return response.status === 200;
-            } catch {
-                return false;
-            }
-        }
-    }
+            // Store in local IPFS node
+            const cid = await this.fs.addBytes(content);
+            logger.info(`File stored in local IPFS with CID: ${cid}`);
 
-    /**
-     * Upload data to IPFS and optionally pin it
-     * @param data Buffer or string data to upload
-     * @param pin Whether to pin the data (default: false)
-     * @returns CID (Content Identifier) of the uploaded data
-     */
-    public async uploadData(data: Buffer | string, pin: boolean = false): Promise<string> {
-        try {
-            // Convert string to Buffer if needed
-            const buffer = Buffer.isBuffer(data) ? data : Buffer.from(data);
+            // Pin to Pinata for persistence
+            const pinataCid = await this.pinataService.pinFile(content, {
+                name: options?.name,
+                keyvalues: options?.metadata
+            });
 
-            // Add the data to IPFS
-            const cid = await this.fs.addBytes(buffer);
-            const cidString = cid.toString();
-
-            if (pin) {
-                await this.pin(cidString);
+            if (cid.toString() !== pinataCid) {
+                logger.warn(`CID mismatch: Local ${cid}, Pinata ${pinataCid}`);
             }
 
-            logger.info(`Data uploaded to IPFS with CID: ${cidString}`);
-            return cidString;
+            return pinataCid;
         } catch (error) {
-            logger.error('Failed to upload data to IPFS:', error);
+            logger.error('Error storing file:', error);
             throw error;
         }
     }
 
     /**
-     * Upload metadata object to IPFS
-     * @param metadata Object containing metadata
-     * @param pin Whether to pin the metadata (uses IPFS_PIN_METADATA from config)
-     * @returns CID of the uploaded metadata
+     * Stores metadata in IPFS and pins it to Pinata
+     * @param metadata Metadata object
+     * @param options Optional Pinata metadata
+     * @returns CID of the stored metadata
      */
-    public async uploadMetadata(metadata: Record<string, any>, pin: boolean = config.IPFS_PIN_METADATA): Promise<string> {
+    async storeMetadata(metadata: object, options?: { name?: string }): Promise<string> {
         try {
-            const metadataString = JSON.stringify(metadata);
-            return await this.uploadData(metadataString, pin);
-        } catch (error) {
-            logger.error('Failed to upload metadata to IPFS:', error);
-            throw error;
-        }
-    }
+            const content = JSON.stringify(metadata);
+            const contentBuffer = Buffer.from(content);
 
-    /**
-     * Pin data to ensure it persists
-     * @param cid Content Identifier to pin
-     */
-    public async pin(cid: string): Promise<void> {
-        try {
-            await this.helia.pins.add(cid);
-            logger.info(`Pinned CID: ${cid}`);
-        } catch (error) {
-            logger.error(`Failed to pin CID ${cid}:`, error);
-            throw error;
-        }
-    }
+            // Store in local IPFS node
+            const cid = await this.fs.addBytes(contentBuffer);
+            logger.info(`Metadata stored in local IPFS with CID: ${cid}`);
 
-    /**
-     * Unpin data if it's no longer needed
-     * @param cid Content Identifier to unpin
-     */
-    public async unpin(cid: string): Promise<void> {
-        try {
-            await this.helia.pins.rm(cid);
-            logger.info(`Unpinned CID: ${cid}`);
-        } catch (error) {
-            logger.error(`Failed to unpin CID ${cid}:`, error);
-            throw error;
-        }
-    }
+            // Pin to Pinata for persistence
+            const pinataCid = await this.pinataService.pinJSON(metadata, {
+                name: options?.name
+            });
 
-    /**
-     * Retrieve data from IPFS by CID with timeout and retries
-     * @param cid Content Identifier
-     * @param timeout Timeout in milliseconds (from config)
-     * @param retries Number of retries (from config)
-     * @returns Retrieved data as Buffer
-     */
-    public async getData(
-        cid: string,
-        timeout: number = config.IPFS_TIMEOUT_MS,
-        retries: number = config.IPFS_MAX_RETRIES
-    ): Promise<Buffer> {
-        let lastError: Error | null = null;
-
-        for (let i = 0; i < retries; i++) {
-            try {
-                const chunks: Uint8Array[] = [];
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-                try {
-                    for await (const chunk of this.fs.cat(cid, { signal: controller.signal })) {
-                        chunks.push(chunk);
-                    }
-                } finally {
-                    clearTimeout(timeoutId);
-                }
-
-                return Buffer.concat(chunks);
-            } catch (error) {
-                lastError = error as Error;
-                logger.warn(`Attempt ${i + 1} failed to retrieve data from IPFS for CID ${cid}:`, error);
-
-                // If it's not the last attempt, wait before retrying
-                if (i < retries - 1) {
-                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-                }
+            if (cid.toString() !== pinataCid) {
+                logger.warn(`CID mismatch: Local ${cid}, Pinata ${pinataCid}`);
             }
-        }
 
-        logger.error(`Failed to retrieve data from IPFS for CID ${cid} after ${retries} attempts:`, lastError);
-        throw lastError;
+            return pinataCid;
+        } catch (error) {
+            logger.error('Error storing metadata:', error);
+            throw error;
+        }
     }
 
     /**
-     * Retrieve and parse metadata from IPFS
-     * @param cid Content Identifier
+     * Retrieves content from IPFS with fallback to Pinata gateway
+     * @param cid Content identifier
+     * @returns Content as string
+     */
+    async getContent(cid: string): Promise<string> {
+        let content: string | undefined;
+        let error: Error | undefined;
+
+        // Try local IPFS node first
+        try {
+            const chunks = [];
+            for await (const chunk of this.fs.cat(cid)) {
+                chunks.push(chunk);
+            }
+            content = Buffer.concat(chunks).toString();
+            logger.info(`Content retrieved from local IPFS: ${cid}`);
+            return content;
+        } catch (e) {
+            error = e as Error;
+            logger.warn(`Failed to retrieve from local IPFS: ${e.message}`);
+        }
+
+        // Fallback to Pinata gateway
+        try {
+            content = await this.pinataService.getContent(cid);
+            logger.info(`Content retrieved from Pinata gateway: ${cid}`);
+            return content;
+        } catch (e) {
+            logger.error('Failed to retrieve content from both local and Pinata:', e);
+            throw error || e;
+        }
+    }
+
+    /**
+     * Gets metadata from IPFS
+     * @param cid Content identifier
      * @returns Parsed metadata object
      */
-    public async getMetadata<T>(cid: string): Promise<T> {
+    async getMetadata(cid: string): Promise<any> {
+        const content = await this.getContent(cid);
         try {
-            // First check if the CID exists
-            const exists = await this.exists(cid);
-            if (!exists) {
-                throw new Error(`CID ${cid} does not exist or is not accessible`);
-            }
-
-            const data = await this.getData(cid);
-            return JSON.parse(data.toString()) as T;
+            return JSON.parse(content);
         } catch (error) {
-            logger.error(`Failed to retrieve metadata from IPFS for CID ${cid}:`, error);
-            throw error;
+            logger.error('Error parsing metadata:', error);
+            throw new Error('Invalid metadata format');
         }
+    }
+
+    /**
+     * Gets the gateway URL for a CID
+     * @param cid The CID to get the URL for
+     * @returns The Pinata gateway URL
+     */
+    getGatewayUrl(cid: string): string {
+        return this.pinataService.getGatewayUrl(cid);
     }
 } 

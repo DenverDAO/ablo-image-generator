@@ -173,72 +173,152 @@ The key dependencies include:
 
 ### Architecture
 
-- Using Helia IPFS client with filesystem-based blockstore
-- Persistent data storage in configurable directory
-- Singleton service pattern with async initialization
-- Configurable gateway fallback for content resolution
+- Helia IPFS client with filesystem blockstore
+- Pinata service for reliable pinning
+- Local node for quick access
+- Gateway fallback for reliability
 
 ### Features
 
-- File and metadata storage with CID generation
-- Content pinning for persistence
-- Automatic directory creation and management
-- Retry mechanism with configurable timeout
+- Persistent data storage
+- Content pinning via Pinata
+- Automatic directory management
+- Retry mechanism with timeouts
 - Gateway fallback for content verification
-- Metadata parsing and validation
+- Dedicated and public gateway support
 
 ### Configuration
 
-- Configurable via environment variables:
-  - IPFS_GATEWAY: Gateway URL for content resolution
-  - IPFS_DATA_DIR: Local storage location
-  - IPFS_PIN_METADATA: Auto-pinning control
-  - IPFS_TIMEOUT_MS: Operation timeout
-  - IPFS_MAX_RETRIES: Retry attempts
-  - IPFS_API_KEY/SECRET: Optional external service integration
+- Environment-based setup
+- Configurable data directory
+- Pinata JWT authentication
+- Gateway URL configuration
+- Timeout and retry settings
+- Optional dedicated gateway
 
 ### Error Handling
 
-- Graceful initialization failure recovery
-- Timeout handling for network operations
-- Retry logic for transient failures
+- Graceful degradation
+- Multiple retrieval attempts
 - Detailed error logging
-- Gateway fallback for content verification
+- CID verification
+- Gateway fallback
+
+### Security
+
+- JWT-based authentication for Pinata
+- Environment variable protection
+- Local data encryption (planned)
+- Access control (planned)
 
 ## Story Protocol Integration
 
-- IP Asset Registration using `mintAndRegisterIpAssetWithPilTerms`
-- IPFS metadata storage and retrieval
-- License terms configuration
-- Environment variable validation
+### Architecture
+
+- SDK-based integration
+- HTTP API fallback for asset retrieval
+- Base Sepolia testnet support
+- Environment-based configuration
+
+### Features
+
+- IP asset registration
+- Metadata storage
+- License term configuration
+- Asset retrieval via HTTP API
+- Transaction management
+
+### Configuration
+
+- Network settings
+- Contract addresses
+- Private key management
+- API endpoints
+
+### Error Handling
+
+- Transaction failure recovery
+- Detailed error logging
+- Retry mechanisms
+- Validation checks
 
 ## Development Setup
 
-- Using Story Protocol's Aeneid testnet
-- IPFS gateway configured for metadata storage
-- Environment variables required for blockchain interaction
+### Dependencies
 
-## Dependencies
+- Node.js and pnpm
+- TypeScript
+- Express.js
+- Story Protocol SDK
+- Helia IPFS client
+- Pinata SDK
+- Winston logger
 
-- @story-protocol/core-sdk: Latest version
-- helia: IPFS client
-- @helia/unixfs: IPFS filesystem operations
-- blockstore-fs: Persistent storage
-- viem: Blockchain interactions
-- envalid: Environment validation
-- winston: Logging
+### Environment
+
+- Development on Base Sepolia
+- Local IPFS node
+- Pinata for production storage
+- Configurable gateways
 
 ## Technical Constraints
 
-- Story Protocol SDK limitations in asset retrieval
-- Need to maintain local cache of registered assets
-- Blockchain transaction latency considerations
-- IPFS gateway reliability and performance
+### IPFS
 
-## Security Considerations
+- Content availability depends on pinning
+- Gateway response times vary
+- Local node storage limits
+- Network bandwidth requirements
+
+### Blockchain
+
+- Transaction costs
+- Network congestion
+- Block confirmation times
+- Contract deployment costs
+
+### Security
 
 - Private key management
 - API key protection
-- Rate limiting for blockchain interactions
-- Error handling for failed transactions
-- Secure metadata storage and retrieval
+- Rate limiting
+- Access control
+
+## Monitoring & Logging
+
+### Logging System
+
+- Winston logger
+- Structured log format
+- Environment-based levels
+- Error context preservation
+
+### Metrics (Planned)
+
+- Transaction success rates
+- IPFS operation latency
+- Gateway response times
+- Storage usage tracking
+
+## Future Considerations
+
+### Scalability
+
+- Load balancing
+- Caching layer
+- Queue system
+- Multiple IPFS nodes
+
+### Security
+
+- Enhanced access control
+- Rate limiting
+- API key rotation
+- Audit logging
+
+### Features
+
+- Batch operations
+- Content verification
+- Automated pinning policies
+- Advanced search capabilities

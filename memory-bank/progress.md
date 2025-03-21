@@ -14,16 +14,20 @@
 
 - Implemented Helia IPFS client with filesystem blockstore
 - Persistent data storage with configurable directory
-- Content pinning support with configuration options
+- Content pinning support with Pinata integration
 - Retry mechanism for failed operations
 - Automatic data directory management
 - Gateway fallback for content verification
+- Dedicated and public gateway support
+- Pinata JWT authentication
+- CID verification and validation
 
 ### Story Protocol Integration
 
 - Implemented Story Protocol service
 - Successfully integrated with Base Sepolia testnet
 - Image registration with PIL terms
+- Asset retrieval via HTTP API
 - Environment configuration for blockchain interaction
 - Basic error handling for blockchain operations
 
@@ -33,22 +37,26 @@
 - Example configuration file with documentation
 - Validation for required settings
 - Flexible configuration options for IPFS and Story Protocol
+- Pinata service configuration
+- Gateway URL configuration
 
 ## In Progress
 
 ### Story Protocol Integration
 
-- Implementing correct method for retrieving IP assets
 - Improving error handling for blockchain operations
 - Adding local cache for asset details
 - Monitoring SDK updates for improved functionality
+- Implementing batch operations
 
 ### IPFS Integration
 
 - Adding comprehensive testing
 - Implementing monitoring and metrics
-- Considering additional pinning service integration
 - Improving error recovery mechanisms
+- Adding content verification
+- Implementing rate limit handling
+- Adding batch pinning operations
 
 ### General Infrastructure
 
@@ -66,6 +74,8 @@
 - Transaction status display
 - Asset gallery view
 - User dashboard
+- Pinning status indicators
+- Content verification UI
 
 ### Backend Enhancements
 
@@ -74,6 +84,8 @@
 - Asset management system
 - Caching layer
 - Background job processing
+- Automated pinning policies
+- Content verification system
 
 ### Testing & Documentation
 
@@ -82,6 +94,7 @@
 - API documentation
 - Deployment guide
 - User documentation
+- Pinning strategy documentation
 
 ## Known Issues
 
@@ -96,6 +109,8 @@
 - Network reliability concerns
 - Timeout handling needs improvement
 - Content verification process needs optimization
+- Pinata rate limits need handling
+- Need proper error handling for gateway failures
 
 ### General
 

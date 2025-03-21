@@ -58,4 +58,19 @@ export const config = cleanEnv(process.env, {
   // Wallet Configuration
   WALLET_PRIVATE_KEY: str(),
   RPC_PROVIDER_URL: str(),
+
+  // Pinata Configuration
+  PINATA_JWT: str({
+    desc: 'Pinata JWT token for API authentication',
+    example: 'eyJhbGc...'
+  }),
+  PINATA_GATEWAY_URL: str({
+    desc: 'Pinata dedicated gateway URL',
+    example: 'your-gateway.mypinata.cloud',
+    default: 'gateway.pinata.cloud'
+  }),
+  PINATA_DEDICATED_GATEWAY: bool({
+    desc: 'Whether to use a dedicated Pinata gateway',
+    default: false
+  }),
 });
