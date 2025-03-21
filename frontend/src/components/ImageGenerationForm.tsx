@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { apiService } from '@/lib/services/api';
 
 const formSchema = z.object({
   prompt: z.string().min(1, 'Please enter a prompt'),
@@ -49,20 +50,8 @@ export function ImageGenerationForm() {
       setError(null);
       setGenerating(true);
 
-      const response = await fetch('http://localhost:3000/api/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate image');
-      }
-
-      const result = await response.json();
-      setGeneratedImage(result.imageUrl);
+      const response = await apiService.generateImage(data);
+      setGeneratedImage(response.imageUrl, data);
       toast.success('Image generated successfully!');
     } catch (err) {
       console.error(err);

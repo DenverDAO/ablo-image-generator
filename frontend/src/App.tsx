@@ -1,6 +1,7 @@
 import { Layout } from './components/layout/Layout';
 import { ImageGenerationForm } from './components/ImageGenerationForm';
 import { GeneratedImage } from './components/GeneratedImage';
+import { MintDialog } from './components/MintDialog';
 import { Toaster } from 'sonner';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <GeneratedImage />
         </div>
       </Layout>
+      <MintDialog />
       <Toaster />
     </>
   );
